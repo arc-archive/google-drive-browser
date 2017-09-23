@@ -1,0 +1,8 @@
+.project
+.vscode
+.imdone
+node_modules
+bower_components
+build
+dist
+npm-lock.json

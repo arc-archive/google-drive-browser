@@ -275,7 +275,7 @@ Custom property | Description | Default
         this._nextPageRequested();
       }
     },
-
+    // Resets the view when token value change.
     _accessTokenChanged: function(token) {
       if (!token) {
         this._setSelectedView(0);
@@ -287,11 +287,11 @@ Custom property | Description | Default
         }
       }
     },
-
+    // Forces the view to display list view.
     showList: function() {
       this._setSelectedView(1);
     },
-
+    // Called when list of elements requested more data.
     _nextPageRequested: function() {
       this.debounce('query-file', function() {
         this._queryFiles();

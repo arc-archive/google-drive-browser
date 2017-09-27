@@ -33,9 +33,10 @@ A Google Drive files list.
     <style>
     :host {
       display: block;
+      position: relative;
       @apply --layout-vertical;
-      @apply --layout-flex;
       @apply --arc-font-body1;
+      height: 100%;
     }
 
     h2 {
@@ -47,10 +48,9 @@ A Google Drive files list.
       margin: 0 16px;
     }
 
-    #threshold,
     #list {
       @apply --layout-flex;
-      min-height: 200px;
+      min-height: var(--google-drive-list-view-min-height, 400px);
     }
 
     .shared-icon {
@@ -95,22 +95,21 @@ A Google Drive files list.
         <paper-icon-button suffix icon="arc:search" class="search-icon" on-tap="_searchAction" title="Search"></paper-icon-button>
       </paper-input>
     </div>
-    <iron-scroll-threshold on-lower-threshold="nextPage" id="threshold">
-      <iron-list scroll-target="[[_scrollTarget]]" items="[[items]]" id="list" selected-as="selected" selection-enabled>
-        <template>
-          <div class$="list-item [[_computeItemClass(selected, item.capabilities.canDownload)]]">
-            <paper-icon-item tabindex$="[[tabIndex]]">
-              <iron-icon icon="[[_computeIcon(item.shared)]]" class="shared-icon" item-icon title="Shared with you"></iron-icon>
-              <paper-item-body two-line>
-                <div class="name-label">[[item.name]]</div>
-                <div secondary><date-time date="[[item.createdTime]]" year="numeric" month="short" day="numeric" hour="2-digit" minute="2-digit"></date-time></div>
-              </paper-item-body>
-              <paper-button class="main-action" data-action="open-item" on-tap="_openItem" raised disabled="[[!item.capabilities.canDownload]]">Open</paper-button>
-            </paper-icon-item>
-          </div>
-        </template>
-      </iron-list>
-    </iron-scroll-threshold>
+    <iron-list items="[[items]]" id="list" selected-as="selected" selection-enabled>
+      <template>
+        <div class$="list-item [[_computeItemClass(selected, item.capabilities.canDownload)]]">
+          <paper-icon-item tabindex$="[[tabIndex]]">
+            <iron-icon icon="[[_computeIcon(item.shared)]]" class="shared-icon" item-icon title="Shared with you"></iron-icon>
+            <paper-item-body two-line>
+              <div class="name-label">[[item.name]]</div>
+              <div secondary><date-time date="[[item.createdTime]]" year="numeric" month="short" day="numeric" hour="2-digit" minute="2-digit"></date-time></div>
+            </paper-item-body>
+            <paper-button class="main-action" data-action="open-item" on-tap="_openItem" raised disabled="[[!item.capabilities.canDownload]]">Open</paper-button>
+          </paper-icon-item>
+        </div>
+      </template>
+    </iron-list>
+    <iron-scroll-threshold on-lower-threshold="nextPage" id="threshold" scroll-target="list"></iron-scroll-threshold>
   </template>
   <script>
   Polymer({

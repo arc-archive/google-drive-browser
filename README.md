@@ -20,6 +20,7 @@ Custom property | Description | Default
 `--arc-font-headline` | Mixin applied to the header | `{}`
 `--action-button` | Mixin applied to the main action button | `{}`
 `--secondary-action-button-color` | Color of the secondary acction button | `--primary-color`
+`--google-drive-list-view-min-height` | The minimum height of the list element | `400px`
 
 
 

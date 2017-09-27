@@ -1,3 +1,13 @@
+<a name="0.1.5"></a>
+## [0.1.5](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.4...0.1.5) (2017-09-27)
+
+
+### New
+
+* Added mixin to title elements. ([27991e4ba2ca2f228e7ac89af4e0384c65f7848e](https://github.com/advanced-rest-client/google-drive-browser/commit/27991e4ba2ca2f228e7ac89af4e0384c65f7848e))
+
+
+
 <a name="0.1.4"></a>
 ## [0.1.4](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.3...0.1.4) (2017-09-27)
 

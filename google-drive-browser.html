@@ -43,6 +43,7 @@ Custom property | Description | Default
 `--arc-font-headline` | Mixin applied to the header | `{}`
 `--action-button` | Mixin applied to the main action button | `{}`
 `--secondary-action-button-color` | Color of the secondary acction button | `--primary-color`
+`--google-drive-list-view-min-height` | The minimum height of the list element | `400px`
 
 @group UI Elements
 @element google-drive-browser
@@ -53,16 +54,13 @@ Custom property | Description | Default
     <style>
     :host {
       display: block;
-      box-sizing: border-box;
       @apply --arc-font-body1;
-      @apply --layout-vertical;
-      @apply --layout-flex;
       @apply --google-drive-browser;
+      height: inherit;
     }
 
     iron-pages {
-      @apply --layout-vertical;
-      @apply --layout-flex;
+      height: inherit;
     }
 
     paper-progress {

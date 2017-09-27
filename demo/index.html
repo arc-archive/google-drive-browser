@@ -96,7 +96,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function(scope) {
     scope._onAuth = function(e) {
       scope.authScope = e.detail.scope;
-      document.querySelector('google-signin-aware').signIn();
+      if (scope.needAdditionalAuth) {
+        document.querySelector('google-signin-aware').signIn();
+      } else {
+        let user = gapi.auth2.getAuthInstance().currentUser.get();
+        let session = user.getAuthResponse();
+        scope.fire('google-signin-success', {
+          scope: session.scope,
+          token: session.access_token
+        });
+      }
     };
     scope.handleStateChange = function(e) {
       var signedIn = e.target.signedIn;

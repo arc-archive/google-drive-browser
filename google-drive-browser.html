@@ -19,6 +19,7 @@ the License.
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../error-message/error-message.html">
 <link rel="import" href="../arc-icons/arc-icons.html">
+<link rel="import" href="../events-target-behavior/events-target-behavior.html">
 <link rel="import" href="google-drive-authorize.html">
 <link rel="import" href="google-drive-list-view.html">
 <link rel="import" href="google-drive-app-not-authorized.html">
@@ -107,7 +108,8 @@ Custom property | Description | Default
   Polymer({
     is: 'google-drive-browser',
     behaviors: [
-      ArcBehaviors.OpenablePanelBehavior
+      ArcBehaviors.OpenablePanelBehavior,
+      ArcBehaviors.EventsTargetBehavior
     ],
 
     /**
@@ -213,6 +215,51 @@ Custom property | Description | Default
       '_openedChanged(_isOpened)'
     ],
 
+    _attachListeners: function(node) {
+      this.listen(node, 'google-signin-success', '_signedinHandler');
+      this.listen(node, 'google-signout', '_signoutHandler');
+    },
+
+    _detachListeners: function(node) {
+      this.unlisten(node, 'google-signin-success', '_signedinHandler');
+      this.unlisten(node, 'google-signout', '_signoutHandler');
+    },
+    /**
+     * Handler for the `google-signin-success` event. If the `scope`
+     * property set on the `detail` object matches `scope` set on this element
+     * then it sets the `accessToken` property from detail's `token` property.
+     */
+    _signedinHandler: function(e) {
+      if (!this._hasScope(e.detail.scope)) {
+        return;
+      }
+      this.accessToken = e.detail.token;
+    },
+    /**
+     * Handler for the `google-signin-success` custom event.
+     * Clears the `accessToken` property.
+     */
+    _signoutHandler: function() {
+      this.accessToken = undefined;
+    },
+    /**
+     * Checks if current `scope` matches passed `scope` value.
+     * @param {String} scope Scope to check
+     * @return {Boolean} True if `scope` set on this element matches passed value.
+     */
+    _hasScope: function(scope) {
+      if (!scope) {
+        return false;
+      }
+      var localScope = this.scope;
+      if (!localScope) {
+        return true;
+      }
+      var scopes = localScope.split(' ');
+      var index = scopes.findIndex(item => scope.indexOf(item.trim()) === -1);
+      return index === -1;
+    },
+    // Chooses a view depending on athorization value.
     _openedChanged: function(opened) {
       if (!opened) {
         return;

@@ -1,3 +1,13 @@
+<a name="0.1.8"></a>
+## [0.1.8](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.7...0.1.8) (2017-10-03)
+
+
+### Update
+
+* Cleaning the authorizing property changed. ([5f41e57e2e7579f10718a2caae55e46423f9fae7](https://github.com/advanced-rest-client/google-drive-browser/commit/5f41e57e2e7579f10718a2caae55e46423f9fae7))
+
+
+
 <a name="0.1.7"></a>
 ## [0.1.7](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.6...0.1.7) (2017-09-27)
 

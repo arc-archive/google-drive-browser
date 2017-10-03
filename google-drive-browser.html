@@ -229,6 +229,7 @@ Custom property | Description | Default
      * then it sets the `accessToken` property from detail's `token` property.
      */
     _signedinHandler: function(e) {
+      this.$$('google-drive-authorize').authorizing = false;
       if (!this._hasScope(e.detail.scope)) {
         return;
       }
@@ -240,6 +241,7 @@ Custom property | Description | Default
      */
     _signoutHandler: function() {
       this.accessToken = undefined;
+      this.$$('google-drive-authorize').authorizing = false;
     },
     /**
      * Checks if current `scope` matches passed `scope` value.
@@ -280,7 +282,6 @@ Custom property | Description | Default
         this._setSelectedView(0);
       } else {
         this._setSelectedView(1);
-        this.$$('google-drive-authorize').authorizing = false;
         if (!this.items) {
           this._nextPageRequested();
         }

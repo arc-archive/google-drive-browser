@@ -546,7 +546,7 @@ Custom property | Description | Default
       });
       this._fileId = undefined;
     },
-
+    // Handles event sent by the list to display download info.
     _appNotAuthorizedHandler: function(e) {
       var item = e.detail.item;
       this._explainAppNotAuthorized(item);

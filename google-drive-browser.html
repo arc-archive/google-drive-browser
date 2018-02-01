@@ -80,7 +80,12 @@ Custom property | Description | Default
     </template>
     <iron-pages selected="[[selectedView]]">
       <google-drive-authorize scope="[[scope]]"></google-drive-authorize>
-      <google-drive-list-view items="[[items]]" on-load-next-page="_nextPageRequested" on-drive-file-search="_onSearch" on-drive-file-open="_onOpenFile"></google-drive-list-view>
+      <google-drive-list-view
+        items="[[items]]"
+        on-load-next-page="_nextPageRequested"
+        on-drive-file-search="_onSearch"
+        on-drive-file-open="_onOpenFile"
+        on-app-not-authorized-error="_appNotAuthorizedHandler"></google-drive-list-view>
       <section>
         <error-message>
           <p>[[errorMessage]]</p>
@@ -329,7 +334,7 @@ Custom property | Description | Default
       if (this.query) {
         q += ` and name contains '${this.query}'`;
       }
-      var fields = 'files(capabilities/canEdit,capabilities/canDownload';
+      var fields = 'files(capabilities/canEdit,capabilities/canDownload,isAppAuthorized';
       fields += ',createdTime,id,name,shared,size,webViewLink),nextPageToken';
 
       var params = {
@@ -434,7 +439,9 @@ Custom property | Description | Default
             case 'appNotAuthorizedToFile':
               //The requesting app is not on the ACL for the file. The user never explicitly opened
               //the file with this Drive app.
-              this._explainAppNotAuthorized();
+              var id = this._fileId;
+              var file = this.items.find(item => item.id === id);
+              this._explainAppNotAuthorized(file);
               return;
             case 'dailyLimitExceeded':
               message = 'You do not have sufficient permissions for the file.';
@@ -465,9 +472,7 @@ Custom property | Description | Default
      * Drive UI and opend with ARC using Drive UI.
      * This opens the page that describe the issue.
      */
-    _explainAppNotAuthorized: function() {
-      var id = this._fileId;
-      var file = this.items.find(item => item.id === id);
+    _explainAppNotAuthorized: function(file) {
       this.$$('google-drive-app-not-authorized').item = file;
       this._setSelectedView(3);
     },
@@ -510,6 +515,11 @@ Custom property | Description | Default
         diveId: this._fileId
       });
       this._fileId = undefined;
+    },
+
+    _appNotAuthorizedHandler: function(e) {
+      var item = e.detail.item;
+      this._explainAppNotAuthorized(item);
     }
   });
   </script>

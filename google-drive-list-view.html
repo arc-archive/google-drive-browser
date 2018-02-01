@@ -37,6 +37,7 @@ A Google Drive files list.
       @apply --layout-vertical;
       @apply --arc-font-body1;
       height: 100%;
+      @apply --google-drive-list-view;
     }
 
     h2 {
@@ -55,25 +56,26 @@ A Google Drive files list.
     }
 
     .shared-icon {
-      color: rgba(0, 0, 0, 0.54);
+      color: var(--google-drive-list-view-file-icon-color, rgba(0, 0, 0, 0.54));
     }
 
     .search-icon {
-      color: rgba(0, 0, 0, 0.54);
+      color: var(--google-drive-list-view-search-icon-color, rgba(0, 0, 0, 0.54));
     }
 
     .list-item {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
+      @apply --layout-horizontal;
+      @apply --layout-center;
+      @apply --google-drive-list-view-item;
     }
 
     .list-item.disabled {
       pointer-events: none;
-      color: rgba(0, 0, 0, 0.45) !important;
+      color: var(--google-drive-list-view-item-disabled-color, rgba(0, 0, 0, 0.45)) !important;
     }
 
     .iron-selected {
-      background-color: #e0e0e0;
+      background-color: var(--google-drive-list-view-selected-background-color, #e0e0e0);
     }
 
     paper-icon-item {
@@ -92,6 +94,12 @@ A Google Drive files list.
 
     .meta {
       margin-right: 8px;
+    }
+
+    .download-info {
+      @apply --action-button;
+      height: 36px;
+      font-size: 14px;
     }
     </style>
     <h2>Open Google Drive file</h2>
@@ -112,7 +120,12 @@ A Google Drive files list.
                 <span class="meta">Size: [[_computeSize(item.size)]]</span>
               </div>
             </paper-item-body>
-            <paper-button class="main-action" data-action="open-item" on-tap="_openItem" raised disabled="[[!item.capabilities.canDownload]]">Open</paper-button>
+            <template is="dom-if" if="[[item.isAppAuthorized]]">
+              <paper-button class="main-action" data-action="open-item" on-tap="_openItem" raised disabled="[[!item.capabilities.canDownload]]">Open</paper-button>
+            </template>
+            <template is="dom-if" if="[[!item.isAppAuthorized]]">
+              <paper-button class="download-info" data-action="download-info" on-tap="_downloadAppInfo" raised>Download info</paper-button>
+            </template>
           </paper-icon-item>
         </div>
       </template>
@@ -218,6 +231,15 @@ A Google Drive files list.
         return 'Shared with you';
       }
       return 'You own this file';
+    },
+
+    _downloadAppInfo: function(e) {
+      var model = this.$.list.modelForElement(e.target).get('item');
+      this.fire('app-not-authorized-error', {
+        item: model
+      }, {
+        bubbles: false
+      });
     }
   });
   </script>

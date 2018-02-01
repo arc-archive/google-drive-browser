@@ -207,7 +207,14 @@ Custom property | Description | Default
       /**
        * Current drive file ID.
        */
-      _fileId: String
+      _fileId: String,
+      // True when there's no more result for current query.
+      hasMore: {
+        type: Boolean,
+        readOnly: true,
+        value: true,
+        notify: true
+      }
     },
 
     observers: [
@@ -302,7 +309,7 @@ Custom property | Description | Default
      * Query for the files on Google Drive.
      */
     _queryFiles: function() {
-      if (this.loading || !this._isOpened) {
+      if (this.loading || !this._isOpened || !this.accessToken || !this.hasMore) {
         return;
       }
       this.loading = true;
@@ -332,8 +339,8 @@ Custom property | Description | Default
         'orderBy': 'modifiedTime desc',
         'key': this.apiKey
       };
-      if (this.nextPageToken) {
-        params.pageToken = this.nextPageToken;
+      if (this._nextPageToken) {
+        params.pageToken = this._nextPageToken;
       }
       this._setQueryParams(params);
       this.$.query.headers = {
@@ -356,6 +363,7 @@ Custom property | Description | Default
      */
     _resetQuery: function() {
       this._nextPageToken = undefined;
+      this._setHasMore(true);
       this.items = undefined;
       this._queryFiles();
     },
@@ -369,7 +377,11 @@ Custom property | Description | Default
       this._nextPageToken = response.nextPageToken;
       this.loading = false;
       var items = response.files;
-      if (!items) {
+      var hasItems = !!(items && items.length);
+      if (!response.nextPageToken || !hasItems) {
+        this._setHasMore(false);
+      }
+      if (!hasItems) {
         return;
       }
       if (!this.items) {

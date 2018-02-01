@@ -82,7 +82,7 @@ Custom property | Description | Default
       <google-drive-authorize scope="[[scope]]"></google-drive-authorize>
       <google-drive-list-view
         items="[[items]]"
-        on-load-next-page="_nextPageRequested"
+        on-load-next-page="_queryFiles"
         on-drive-file-search="_onSearch"
         on-drive-file-open="_onOpenFile"
         on-app-not-authorized-error="_appNotAuthorizedHandler"></google-drive-list-view>
@@ -178,6 +178,11 @@ Custom property | Description | Default
        * before the query
        */
       queryPropertiesNegation: Boolean,
+      // A `pageSize` property value to be send to Drive endpoint.
+      querySize: {
+        type: Number,
+        value: 50
+      },
       /**
        * Mime type of the file to search.
        */
@@ -282,8 +287,18 @@ Custom property | Description | Default
         return true;
       }
       var scopes = localScope.split(' ');
-      var index = scopes.findIndex(item => scope.indexOf(item.trim()) === -1);
-      return index === -1;
+      var hasScope = false;
+      for (var i = 0, len = scopes.length; i < len; i++) {
+        let localScope = scopes[i].trim();
+        if (!localScope) {
+          continue;
+        }
+        if (scope.indexOf(localScope) !== -1) {
+          hasScope = true;
+          break;
+        }
+      }
+      return hasScope;
     },
     // Chooses a view depending on athorization value.
     _openedChanged: function(opened) {
@@ -298,7 +313,7 @@ Custom property | Description | Default
       }
       this._setSelectedView(1);
       if (!this.items) {
-        this._nextPageRequested();
+        this._queryFiles();
       }
     },
     // Resets the view when token value change.
@@ -308,20 +323,15 @@ Custom property | Description | Default
         this._setSelectedView(0);
       } else {
         this._setSelectedView(1);
-        if (!this.items) {
-          this._nextPageRequested();
+        if (!this.items && this._isOpened) {
+          this._queryFiles();
         }
       }
     },
+
     // Forces the view to display list view.
     showList: function() {
       this._setSelectedView(1);
-    },
-    // Called when list of elements requested more data.
-    _nextPageRequested: function() {
-      this.debounce('query-file', function() {
-        this._queryFiles();
-      }, 100);
     },
 
     /**
@@ -364,7 +374,7 @@ Custom property | Description | Default
     _setQueryParameters: function() {
       var params = {
         'q': this._buildQuery(),
-        'pageSize': 50,
+        'pageSize': this.querySize,
         'fields': this.fieldsProjection,
         'orderBy': 'modifiedTime desc',
         'key': this.apiKey

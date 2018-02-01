@@ -1,0 +1,370 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+    <link rel="import" href="../google-drive-browser.html">
+    <script src="../../chance/dist/chance.min.js"></script>
+    <script src="drive-server-helper.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <google-drive-browser api-key="abc"></google-drive-browser>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="token">
+      <template>
+        <google-drive-browser api-key="testApiKey" access-token="testToken"></google-drive-browser>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="scopes">
+      <template>
+        <google-drive-browser api-key="testApiKey" scope="scope1 scope2"></google-drive-browser>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="attrForOpened">
+      <template>
+        <google-drive-browser attr-for-opened="opened"></google-drive-browser>
+      </template>
+    </test-fixture>
+
+    <script>
+    /* global fixture, assert, DriveServer, sinon */
+    suite('Google Drive Browser', function() {
+      var element;
+      suiteSetup(function() {
+        DriveServer.createServer();
+      });
+      suiteTeardown(function() {
+        DriveServer.restore();
+      });
+
+      suite('Basics', function() {
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('loading is undefined', function() {
+          assert.isUndefined(element.loading);
+        });
+
+        test('query is undefined', function() {
+          assert.isUndefined(element.query);
+        });
+
+        test('items is undefined', function() {
+          assert.isUndefined(element.items);
+        });
+
+        test('queryProperties is undefined', function() {
+          assert.isUndefined(element.queryProperties);
+        });
+
+        test('queryParams is undefined', function() {
+          assert.isUndefined(element.queryParams);
+        });
+
+        test('_nextPageToken is undefined', function() {
+          assert.isUndefined(element._nextPageToken);
+        });
+
+        test('_fileId is undefined', function() {
+          assert.isUndefined(element._fileId);
+        });
+
+        test('selectedView is computed', function() {
+          assert.equal(element.selectedView, 0);
+        });
+
+        test('hasMore is true by default', function() {
+          assert.isTrue(element.hasMore);
+        });
+
+        test('Access token sets loading to true', function() {
+          element.accessToken = 'tokenTest';
+          // debouncer is set
+          assert.isTrue(element.loading);
+        });
+      });
+
+      suite('With access token', function() {
+        setup(function(done) {
+          element = fixture('token');
+          setTimeout(function() {
+            done();
+          }, 20);
+        });
+
+        test('selectedView is computed', function() {
+          assert.equal(element.selectedView, 1);
+        });
+
+        test('sets the items array', function() {
+          assert.typeOf(element.items, 'array');
+          assert.lengthOf(element.items, 50);
+        });
+
+        test('loading is false', function() {
+          assert.isFalse(element.loading);
+        });
+      });
+
+      suite('_hasScope()', function() {
+        setup(function() {
+          element = fixture('scopes');
+        });
+
+        test('returns false if no argument', function() {
+          var result = element._hasScope();
+          assert.isFalse(result);
+        });
+
+        test('returns true if no scope property', function() {
+          element.scope = undefined;
+          var result = element._hasScope('test1');
+          assert.isTrue(result);
+        });
+
+        test('returns true for existing scopes', function() {
+          var result = element._hasScope('scope1');
+          assert.isTrue(result);
+          result = element._hasScope('scope2');
+          assert.isTrue(result);
+        });
+
+        test('returns false for unknown scope', function() {
+          var result = element._hasScope('testscope');
+          assert.isFalse(result);
+        });
+      });
+
+      suite('_openedChanged()', function() {
+        setup(function() {
+          element = fixture('attrForOpened');
+        });
+
+        test('Do nothing is not opened', function() {
+          var spy = sinon.spy(element, '_queryFiles');
+          element._openedChanged(false);
+          assert.isFalse(spy.called);
+          assert.isUndefined(element.selectedView);
+        });
+
+        test('Sets view to authorization for missing access token', function() {
+          element._openedChanged(true);
+          assert.equal(element.selectedView, 0);
+        });
+
+        test('Throws error when api key is not set', function() {
+          element.accessToken = 'test';
+          assert.throws(function() {
+            element._openedChanged(true);
+          });
+        });
+
+        test('Sets view to list when token and api key', function() {
+          element.accessToken = 'test';
+          element.apiKey = 'test';
+          element._openedChanged(true);
+          assert.equal(element.selectedView, 1);
+        });
+
+        test('Refreshes items list when items is not set', function() {
+          element.accessToken = 'test';
+          element.apiKey = 'test';
+          var spy = sinon.spy(element, '_queryFiles');
+          element._openedChanged(true);
+          assert.isTrue(spy.called);
+        });
+
+        test('Do not refreshes items list when items is set', function() {
+          element.accessToken = 'test';
+          element.apiKey = 'test';
+          element.items = [];
+          var spy = sinon.spy(element, '_queryFiles');
+          element._openedChanged(true);
+          assert.isFalse(spy.called);
+        });
+      });
+
+      suite('_accessTokenChanged()', function() {
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('Calls _accessTokenChanged()', function() {
+          var spy = sinon.spy(element, '_setAuthHeader');
+          element._accessTokenChanged(true);
+          assert.isTrue(spy.called);
+        });
+
+        test('Sets view to authorization if not argument', function() {
+          element._accessTokenChanged();
+          assert.equal(element.selectedView, 0);
+        });
+
+        test('Sets view to list if argument', function() {
+          element._accessTokenChanged('test');
+          assert.equal(element.selectedView, 1);
+        });
+
+        test('Calls _queryFiles() when token and no items and opened', function() {
+          element._isOpened = true;
+          var spy = sinon.spy(element, '_queryFiles');
+          element._accessTokenChanged('test');
+          assert.isTrue(spy.called);
+        });
+      });
+
+      suite('_queryFiles()', function() {
+        setup(function() {
+          element = fixture('basic');
+          element._setHasMore(false);
+          element.accessToken = 'test';
+          element._setHasMore(true);
+          assert.isUndefined(element.loading);
+        });
+
+        test('Sets loading to true', function() {
+          element._queryFiles();
+          assert.isTrue(element.loading);
+        });
+
+        test('queryParams is set', function() {
+          element._queryFiles();
+          assert.typeOf(element.queryParams, 'object');
+        });
+
+        test('Is loading results', function() {
+          element._queryFiles();
+          assert.isTrue(element.$.query.loading);
+        });
+      });
+
+      suite('_buildQuery()', function() {
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('Returns trashed property only', function() {
+          var result = element._buildQuery();
+          assert.equal(result, 'trashed = false');
+        });
+
+        test('Adds mimeType', function() {
+          element.mimeType = 'test';
+          var result = element._buildQuery();
+          assert.equal(result, 'trashed = false and mimeType="test"');
+        });
+
+        test('Adds user query', function() {
+          element.query = 'test';
+          var result = element._buildQuery();
+          assert.equal(result, 'trashed = false and name contains \'test\'');
+        });
+
+        test('Adds queryProperties', function() {
+          element.queryProperties = {
+            'a': '1',
+            'b': '2'
+          };
+          var result = element._buildQuery();
+          var compare = 'trashed = false and ';
+          compare += 'properties has {key=\'a\' and value=\'1\'} and ';
+          compare += 'properties has {key=\'b\' and value=\'2\'}';
+          assert.equal(result, compare);
+        });
+
+        test('Adds queryProperties negation', function() {
+          element.queryProperties = {
+            'a': '1',
+            'b': '2'
+          };
+          element.queryPropertiesNegation = true;
+          var result = element._buildQuery();
+          var compare = 'trashed = false and not ';
+          compare += 'properties has {key=\'a\' and value=\'1\'} and not ';
+          compare += 'properties has {key=\'b\' and value=\'2\'}';
+          assert.equal(result, compare);
+        });
+
+        test('All together', function() {
+          element.queryProperties = {
+            'a': '1',
+            'b': '2'
+          };
+          element.queryPropertiesNegation = true;
+          element.mimeType = 'testMime';
+          element.query = 'testQuery';
+          var result = element._buildQuery();
+          var compare = 'trashed = false';
+          compare += ' and mimeType="testMime"';
+          compare += ' and not properties has {key=\'a\' and value=\'1\'}';
+          compare += ' and not properties has {key=\'b\' and value=\'2\'}';
+          compare += ' and name contains \'testQuery\'';
+          assert.equal(result, compare);
+        });
+      });
+
+      suite('_setQueryParameters()', function() {
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('Sets queryParams', function() {
+          element._setQueryParameters();
+          assert.typeOf(element.queryParams, 'object');
+        });
+
+        test('Sets q property', function() {
+          element._setQueryParameters();
+          assert.typeOf(element.queryParams.q, 'string');
+        });
+
+        test('Sets pageSize property', function() {
+          element._setQueryParameters();
+          assert.typeOf(element.queryParams.pageSize, 'number');
+          assert.equal(element.queryParams.pageSize, element.querySize);
+        });
+
+        test('Sets fields property', function() {
+          element._setQueryParameters();
+          assert.typeOf(element.queryParams.fields, 'string');
+        });
+
+        test('Sets orderBy property', function() {
+          element._setQueryParameters();
+          assert.typeOf(element.queryParams.orderBy, 'string');
+        });
+
+        test('Sets orderBy property', function() {
+          element._setQueryParameters();
+          assert.typeOf(element.queryParams.key, 'string');
+          assert.equal(element.queryParams.key, element.apiKey);
+        });
+
+        test('pageToken is not set', function() {
+          element._setQueryParameters();
+          assert.isUndefined(element.queryParams.pageToken);
+        });
+
+        test('pageToken is set when _nextPageToken property is set', function() {
+          element._nextPageToken = 'testToken';
+          element._setQueryParameters();
+          assert.equal(element.queryParams.pageToken, 'testToken');
+        });
+      });
+    });
+    </script>
+
+  </body>
+</html>

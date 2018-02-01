@@ -1,3 +1,13 @@
+<a name="0.1.10"></a>
+## [0.1.10](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.9...0.1.10) (2018-02-01)
+
+
+### Fix
+
+* Fixes https://github.com/advanced-rest-client/arc-electron/issues/3 ([eae40b78556ff91594e2123c1581482e8c6ab553](https://github.com/advanced-rest-client/google-drive-browser/commit/eae40b78556ff91594e2123c1581482e8c6ab553))
+
+
+
 <a name="0.1.9"></a>
 ## [0.1.9](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.8...0.1.9) (2017-10-03)
 

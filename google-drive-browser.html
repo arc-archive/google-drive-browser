@@ -219,6 +219,19 @@ Custom property | Description | Default
         readOnly: true,
         value: true,
         notify: true
+      },
+      /**
+       * A fileds projection requested from the Drive API.
+       * Fields listed here are returned by the Drive query endpoint.
+       */
+      fieldsProjection: {
+        type: String,
+        readOnly: true,
+        value: function() {
+          let fields = 'files(capabilities/canEdit,capabilities/canDownload,isAppAuthorized';
+          fields += ',createdTime,id,name,shared,size,webViewLink),nextPageToken';
+          return fields;
+        }
       }
     },
 
@@ -290,6 +303,7 @@ Custom property | Description | Default
     },
     // Resets the view when token value change.
     _accessTokenChanged: function(token) {
+      this._setAuthHeader(token);
       if (!token) {
         this._setSelectedView(0);
       } else {
@@ -318,29 +332,40 @@ Custom property | Description | Default
         return;
       }
       this.loading = true;
+      this._setQueryParameters();
+      this.$.query.generateRequest();
+    },
+    /**
+     * Builds the query (`q`) parameter for Google Drive API.
+     *
+     * @return {String} A value for the `q` query parameter
+     */
+    _buildQuery: function() {
       var q = 'trashed = false';
-      if (this.mimeType) {
-        q += ' and mimeType="' + this.mimeType + '"';
+      var mt = this.mimeType;
+      if (mt) {
+        q += ' and mimeType="' + mt + '"';
       }
-
       var qp = this.queryProperties;
       if (qp) {
         let negation = this.queryPropertiesNegation ? ' not' : '';
-        Object.keys(qp)
-        .forEach(key => {
+        Object.keys(qp).forEach(key => {
           q += ` and${negation} properties has {key='${key}' and value='${qp[key]}'}`;
         });
       }
       if (this.query) {
         q += ` and name contains '${this.query}'`;
       }
-      var fields = 'files(capabilities/canEdit,capabilities/canDownload,isAppAuthorized';
-      fields += ',createdTime,id,name,shared,size,webViewLink),nextPageToken';
-
+      return q;
+    },
+    /**
+     * Updates the `queryParams` property for current UI state.
+     */
+    _setQueryParameters: function() {
       var params = {
-        'q': q,
+        'q': this._buildQuery(),
         'pageSize': 50,
-        'fields': fields,
+        'fields': this.fieldsProjection,
         'orderBy': 'modifiedTime desc',
         'key': this.apiKey
       };
@@ -348,10 +373,20 @@ Custom property | Description | Default
         params.pageToken = this._nextPageToken;
       }
       this._setQueryParams(params);
-      this.$.query.headers = {
-        'Authorization': 'Bearer ' + this.accessToken
-      };
-      this.$.query.generateRequest();
+    },
+    /**
+     * Sets the authorization header on the Ajax request objects. It affects
+     * query and download requests.
+     *
+     * @param {String} at Access token value. If empty it clears the headers.
+     */
+    _setAuthHeader: function(at) {
+      var headers = {};
+      if (at) {
+        headers.authorization = 'Bearer ' + this.accessToken;
+      }
+      this.$.query.headers = headers;
+      this.$.download.headers = headers;
     },
 
     /**
@@ -499,9 +534,6 @@ Custom property | Description | Default
       }
       this.loading = true;
       this._fileId = id;
-      this.$.download.headers = {
-        'Authorization': 'Bearer ' + this.accessToken
-      };
       this.$.download.generateRequest();
     },
 

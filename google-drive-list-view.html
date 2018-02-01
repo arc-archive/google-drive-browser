@@ -37,6 +37,7 @@ A Google Drive files list.
       @apply --layout-vertical;
       @apply --arc-font-body1;
       height: 100%;
+      @apply --google-drive-list-view;
     }
 
     h2 {
@@ -55,25 +56,26 @@ A Google Drive files list.
     }
 
     .shared-icon {
-      color: rgba(0, 0, 0, 0.54);
+      color: var(--google-drive-list-view-file-icon-color, rgba(0, 0, 0, 0.54));
     }
 
     .search-icon {
-      color: rgba(0, 0, 0, 0.54);
+      color: var(--google-drive-list-view-search-icon-color, rgba(0, 0, 0, 0.54));
     }
 
     .list-item {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
+      @apply --layout-horizontal;
+      @apply --layout-center;
+      @apply --google-drive-list-view-item;
     }
 
     .list-item.disabled {
       pointer-events: none;
-      color: rgba(0, 0, 0, 0.45) !important;
+      color: var(--google-drive-list-view-item-disabled-color, rgba(0, 0, 0, 0.45)) !important;
     }
 
     .iron-selected {
-      background-color: #e0e0e0;
+      background-color: var(--google-drive-list-view-selected-background-color, #e0e0e0);
     }
 
     paper-icon-item {
@@ -89,6 +91,16 @@ A Google Drive files list.
     .main-action[disabled] {
       background-color: rgba(0, 0, 0, 0.45) !important;
     }
+
+    .meta {
+      margin-right: 8px;
+    }
+
+    .download-info {
+      @apply --action-button;
+      height: 36px;
+      font-size: 14px;
+    }
     </style>
     <h2>Open Google Drive file</h2>
     <div class="search">
@@ -100,12 +112,20 @@ A Google Drive files list.
       <template>
         <div class$="list-item [[_computeItemClass(selected, item.capabilities.canDownload)]]">
           <paper-icon-item tabindex$="[[tabIndex]]">
-            <iron-icon icon="[[_computeIcon(item.shared)]]" class="shared-icon" item-icon title="Shared with you"></iron-icon>
+            <iron-icon icon="[[_computeIcon(item.shared)]]" class="shared-icon" item-icon title="[[_computeIconTitle(item.shared)]]"></iron-icon>
             <paper-item-body two-line>
               <div class="name-label">[[item.name]]</div>
-              <div secondary><date-time date="[[item.createdTime]]" year="numeric" month="short" day="numeric" hour="2-digit" minute="2-digit"></date-time></div>
+              <div secondary>
+                <span class="meta">Created: <date-time date="[[item.createdTime]]" year="numeric" month="short" day="numeric" hour="2-digit" minute="2-digit"></date-time></span>
+                <span class="meta">Size: [[_computeSize(item.size)]]</span>
+              </div>
             </paper-item-body>
-            <paper-button class="main-action" data-action="open-item" on-tap="_openItem" raised disabled="[[!item.capabilities.canDownload]]">Open</paper-button>
+            <template is="dom-if" if="[[item.isAppAuthorized]]">
+              <paper-button class="main-action" data-action="open-item" on-tap="_openItem" raised disabled="[[!item.capabilities.canDownload]]">Open</paper-button>
+            </template>
+            <template is="dom-if" if="[[!item.isAppAuthorized]]">
+              <paper-button class="download-info" data-action="download-info" on-tap="_downloadAppInfo" raised>Download info</paper-button>
+            </template>
           </paper-icon-item>
         </div>
       </template>
@@ -128,6 +148,13 @@ A Google Drive files list.
         type: Object,
         value: function() {
           return this.$.threshold;
+        }
+      },
+      // List of bytes sizes suffixes used to compyte file size label
+      _sizeSufixes: {
+        type: Array,
+        value: function() {
+          return ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         }
       }
     },
@@ -183,7 +210,36 @@ A Google Drive files list.
       if (shared) {
         return 'arc:folder-shared';
       }
-      return '';
+      return 'arc:insert-drive-file';
+    },
+    /**
+     * Computes human readable size label from file size.
+     *
+     * @param {Number} bytes File size in bytes
+     * @return {String} Human readable size
+     */
+    _computeSize: function(bytes) {
+      var i = Math.floor(Math.log(bytes) / Math.log(1024));
+      if (!bytes) {
+        return '0 Bytes';
+      }
+      return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + this._sizeSufixes[i];
+    },
+
+    _computeIconTitle: function(starred) {
+      if (starred) {
+        return 'Shared with you';
+      }
+      return 'You own this file';
+    },
+
+    _downloadAppInfo: function(e) {
+      var model = this.$.list.modelForElement(e.target).get('item');
+      this.fire('app-not-authorized-error', {
+        item: model
+      }, {
+        bubbles: false
+      });
     }
   });
   </script>

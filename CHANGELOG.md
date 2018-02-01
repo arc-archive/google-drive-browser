@@ -1,3 +1,27 @@
+<a name="0.1.12"></a>
+## [0.1.12](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.11...0.1.12) (2018-02-01)
+
+
+### Docs
+
+* Updated documentation. ([b8c737c774af9d9c0038b4985e1e0a693c799198](https://github.com/advanced-rest-client/google-drive-browser/commit/b8c737c774af9d9c0038b4985e1e0a693c799198))
+
+### Fix
+
+* Fixed `loading` property state when returning from download file. ([df3605fdddfa421d49cb1058d282a68f917f7a02](https://github.com/advanced-rest-client/google-drive-browser/commit/df3605fdddfa421d49cb1058d282a68f917f7a02))
+
+### Update
+
+* Added faster way to check if app is authorized to download file ([2b22aa79c2808d5b0f1736900c84b3fc4702f0ad](https://github.com/advanced-rest-client/google-drive-browser/commit/2b22aa79c2808d5b0f1736900c84b3fc4702f0ad))
+* Removed debouncer from the query ([c7b9280b4b4e114480816b4ee6f85bf542a2edb1](https://github.com/advanced-rest-client/google-drive-browser/commit/c7b9280b4b4e114480816b4ee6f85bf542a2edb1))
+* Updated application code for readiness ([5dd61b7e7dacd78bb6f9e197b987a96c44b36323](https://github.com/advanced-rest-client/google-drive-browser/commit/5dd61b7e7dacd78bb6f9e197b987a96c44b36323))
+* Updated file metadata view ([d55ba8998c63b56799b9f42edc87e1f496b06192](https://github.com/advanced-rest-client/google-drive-browser/commit/d55ba8998c63b56799b9f42edc87e1f496b06192))
+* Updated host style definition. ([a408a4158010fce4224ac2375d79ec3faad25911](https://github.com/advanced-rest-client/google-drive-browser/commit/a408a4158010fce4224ac2375d79ec3faad25911))
+* Updated lint command ([3a48bf8a827258c361c24e8e0a2eb536d577fda4](https://github.com/advanced-rest-client/google-drive-browser/commit/3a48bf8a827258c361c24e8e0a2eb536d577fda4))
+* Updated tests ([15e2f8fe7d958c68ef65ba29c7cf39c60e75c0ed](https://github.com/advanced-rest-client/google-drive-browser/commit/15e2f8fe7d958c68ef65ba29c7cf39c60e75c0ed))
+
+
+
 <a name="0.1.11"></a>
 ## [0.1.11](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.10...0.1.11) (2018-02-01)
 

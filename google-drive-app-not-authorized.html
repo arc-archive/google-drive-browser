@@ -25,6 +25,8 @@ because the app is not on file's ACL list.
     <style>
     :host {
       display: block;
+      padding-left: 16px;
+      padding-right: 16px;
       @apply --arc-font-body1;
       @apply --layout-vertical;
       @apply --layout-flex;
@@ -32,18 +34,22 @@ because the app is not on file's ACL list.
     }
 
     h2 {
-      margin-left: 16px;
       @apply --arc-font-headline;
       @apply --google-drive-browser-title;
     }
 
     p {
-      margin: 1em 16px;
+      margin: 1em 0;
       color: rgba(0,0,0,0.78);
     }
 
-    paper-button {
-      margin: 1em 16px;
+    p.hint {
+      margin: 1em 0;
+      color: var(--google-drive-app-not-authorized-hint-color, rgba(0,0,0,0.54));
+    }
+
+    .actions {
+      margin: 12px 0;
     }
 
     .main-action {
@@ -57,14 +63,39 @@ because the app is not on file's ACL list.
       height: 36px;
       font-size: 14px;
     }
+
+    .link-info {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 8px;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    code {
+      display: block;
+    }
+
+    #itemViewLink:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
     </style>
-    <h2>App authorization error</h2>
+    <h2>Open file via Drive UI</h2>
     <div>
-      <p>The application can't open files that are not created by you or the application.</p>
-      <p>Please go to Drive web application, <b>select the file and choose "Open with" and next this application name.</b>
+      <p>The file <b>[[item.name]]</b> can't be opened by the app because it <b>wansn't created by this application</b>.</p>
+      <p>Please go to Drive web application, select the file and choose "Open with" and then this application name.</p>
+      <p class="hint">You have to do this only once for each file.</p>
+
+      <section class="link-info">
+        <label for="itemViewLink">Link to the file</label>
+        <code id="itemViewLink" on-tap="openDrive">[[item.webViewLink]]</code>
+      </section>
+
       <div class="actions">
+        <paper-button raised class="main-action" on-tap="openDrive">Open the file in Drive UI</paper-button>
         <paper-button on-tap="back" class="secondary-action">Back to the list</paper-button>
-        <paper-button raised class="main-action" on-tap="openDrive">Open the file</paper-button>
       </div>
     </div>
   </template>

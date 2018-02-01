@@ -410,10 +410,9 @@ Custom property | Description | Default
      * Handler for the Drive list response.
      */
     _onDriveListResponse: function() {
-      var response = this.$.query.lastResponse;
-
-      this._nextPageToken = response.nextPageToken;
       this.loading = false;
+      var response = this.$.query.lastResponse;
+      this._nextPageToken = response.nextPageToken;
       var items = response.files;
       var hasItems = !!(items && items.length);
       if (!response.nextPageToken || !hasItems) {
@@ -539,6 +538,7 @@ Custom property | Description | Default
      * Ajax call success handler for file download.
      */
     _handleDownloadResponse: function() {
+      this.loading = false;
       var response = this.$.download.lastResponse;
       this.fire('drive-file-picker-data', {
         content: response,

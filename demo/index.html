@@ -74,12 +74,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- mime-type="application/restclient+data" -->
       <section card>
         <google-drive-browser
-          api-key="10525470235-anf4fj0c73c0of7g2vt62f0lj93bnrtp.apps.googleusercontent.com"
+          api-key="935342572974-bunq4fuvs521nsbb1ffegtmpq1a224nm.apps.googleusercontent.com"
           mime-type="application/restclient+data"
           on-google-autorize="_onAuth"></google-drive-browser>
       </section>
       <google-signin-aware
-        client-id="10525470235-anf4fj0c73c0of7g2vt62f0lj93bnrtp.apps.googleusercontent.com"
+        client-id="935342572974-bunq4fuvs521nsbb1ffegtmpq1a224nm.apps.googleusercontent.com"
         scopes="{{authScope}}"
         signed-in="{{signedIn}}"
         is-authorized="{{isAuthorized}}"
@@ -111,13 +111,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var signedIn = e.target.signedIn;
       var initialized = e.target.initialized;
       if (initialized && !signedIn) {
-        console.log('Not signed in');
+        console.log('Demo: handleStateChange: Not signed in');
       } else {
-        console.log('Signed in');
+        console.log('Demo: handleStateChange: Signed in');
       }
     };
 
-    scope.handleSignOut = function() {
+    scope.handleSignOut = function(e) {
+      console.log('Demo: handleSignOut', e);
       scope.fire('google-signout', {
         scope: scope.authScope
       });
@@ -125,11 +126,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     };
 
     scope.handleSignInError = function(event) {
-      console.log(event.detail);
+      console.log('Demo: handleSignInError', event.detail);
     };
 
     scope._userAuthorized = function(e) {
       var token = e.detail.access_token;
+      console.log('Demo: _userAuthorized', token);
       scope.fire('google-signin-success', {
         scope: scope.authScope,
         token: token

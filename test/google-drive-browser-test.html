@@ -3,13 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
-    <script src="../../iron-test-helpers/test-helpers.js"></script>
-    <script src="../../iron-test-helpers/mock-interactions.js"></script>
-    <link rel="import" href="../google-drive-browser.html">
     <script src="../../chance/dist/chance.min.js"></script>
     <script src="drive-server-helper.js"></script>
+    <link rel="import" href="../google-drive-browser.html">
   </head>
   <body>
 
@@ -31,16 +29,10 @@
       </template>
     </test-fixture>
 
-    <test-fixture id="attrForOpened">
-      <template>
-        <google-drive-browser attr-for-opened="opened"></google-drive-browser>
-      </template>
-    </test-fixture>
-
     <script>
-    /* global fixture, assert, DriveServer, sinon */
+    /* global DriveServer */
     suite('Google Drive Browser', function() {
-      var element;
+      let element;
       suiteSetup(function() {
         DriveServer.createServer();
       });
@@ -49,8 +41,9 @@
       });
 
       suite('Basics', function() {
-        setup(function() {
+        setup(function(done) {
           element = fixture('basic');
+          flush(() => done());
         });
 
         test('loading is undefined', function() {
@@ -82,7 +75,9 @@
         });
 
         test('selectedView is computed', function() {
-          assert.equal(element.selectedView, 0);
+          Polymer.RenderStatus.afterNextRender(this, () => {
+            assert.equal(element.selectedView, 0);
+          });
         });
 
         test('hasMore is true by default', function() {
@@ -124,65 +119,58 @@
         });
 
         test('returns false if no argument', function() {
-          var result = element._hasScope();
+          const result = element._hasScope();
           assert.isFalse(result);
         });
 
         test('returns true if no scope property', function() {
           element.scope = undefined;
-          var result = element._hasScope('test1');
+          const result = element._hasScope('test1');
           assert.isTrue(result);
         });
 
         test('returns true for existing scopes', function() {
-          var result = element._hasScope('scope1');
+          let result = element._hasScope('scope1');
           assert.isTrue(result);
           result = element._hasScope('scope2');
           assert.isTrue(result);
         });
 
         test('returns false for unknown scope', function() {
-          var result = element._hasScope('testscope');
+          const result = element._hasScope('testscope');
           assert.isFalse(result);
         });
       });
 
-      suite('_openedChanged()', function() {
+      suite('_initView()', function() {
         setup(function() {
-          element = fixture('attrForOpened');
-        });
-
-        test('Do nothing is not opened', function() {
-          var spy = sinon.spy(element, '_queryFiles');
-          element._openedChanged(false);
-          assert.isFalse(spy.called);
-          assert.isUndefined(element.selectedView);
+          element = fixture('basic');
         });
 
         test('Sets view to authorization for missing access token', function() {
-          element._openedChanged(true);
+          element._initView();
           assert.equal(element.selectedView, 0);
         });
 
-        test('Throws error when api key is not set', function() {
-          element.accessToken = 'test';
-          assert.throws(function() {
-            element._openedChanged(true);
-          });
-        });
+        // test('Throws error when api key is not set', function() {
+        //   element.accessToken = 'test';
+        //   assert.throws(function() {
+        //     element._initView();
+        //   });
+        // });
 
         test('Sets view to list when token and api key', function() {
           element.accessToken = 'test';
           element.apiKey = 'test';
-          element._openedChanged(true);
+          element._initView();
           assert.equal(element.selectedView, 1);
         });
 
         test('Refreshes items list when items is not set', function() {
           element.accessToken = 'test';
           element.apiKey = 'test';
-          var spy = sinon.spy(element, '_queryFiles');
-          element._openedChanged(true);
+          const spy = sinon.spy(element, '_queryFiles');
+          element._initView();
           assert.isTrue(spy.called);
         });
 
@@ -190,8 +178,8 @@
           element.accessToken = 'test';
           element.apiKey = 'test';
           element.items = [];
-          var spy = sinon.spy(element, '_queryFiles');
-          element._openedChanged(true);
+          const spy = sinon.spy(element, '_queryFiles');
+          element._initView();
           assert.isFalse(spy.called);
         });
       });
@@ -202,7 +190,7 @@
         });
 
         test('Calls _accessTokenChanged()', function() {
-          var spy = sinon.spy(element, '_setAuthHeader');
+          const spy = sinon.spy(element, '_setAuthHeader');
           element._accessTokenChanged(true);
           assert.isTrue(spy.called);
         });
@@ -217,9 +205,8 @@
           assert.equal(element.selectedView, 1);
         });
 
-        test('Calls _queryFiles() when token and no items and opened', function() {
-          element._isOpened = true;
-          var spy = sinon.spy(element, '_queryFiles');
+        test('Calls _queryFiles() when token and no items', function() {
+          const spy = sinon.spy(element, '_queryFiles');
           element._accessTokenChanged('test');
           assert.isTrue(spy.called);
         });
@@ -256,19 +243,19 @@
         });
 
         test('Returns trashed property only', function() {
-          var result = element._buildQuery();
+          const result = element._buildQuery();
           assert.equal(result, 'trashed = false');
         });
 
         test('Adds mimeType', function() {
           element.mimeType = 'test';
-          var result = element._buildQuery();
+          const result = element._buildQuery();
           assert.equal(result, 'trashed = false and mimeType="test"');
         });
 
         test('Adds user query', function() {
           element.query = 'test';
-          var result = element._buildQuery();
+          const result = element._buildQuery();
           assert.equal(result, 'trashed = false and name contains \'test\'');
         });
 
@@ -277,8 +264,8 @@
             'a': '1',
             'b': '2'
           };
-          var result = element._buildQuery();
-          var compare = 'trashed = false and ';
+          const result = element._buildQuery();
+          let compare = 'trashed = false and ';
           compare += 'properties has {key=\'a\' and value=\'1\'} and ';
           compare += 'properties has {key=\'b\' and value=\'2\'}';
           assert.equal(result, compare);
@@ -290,8 +277,8 @@
             'b': '2'
           };
           element.queryPropertiesNegation = true;
-          var result = element._buildQuery();
-          var compare = 'trashed = false and not ';
+          const result = element._buildQuery();
+          let compare = 'trashed = false and not ';
           compare += 'properties has {key=\'a\' and value=\'1\'} and not ';
           compare += 'properties has {key=\'b\' and value=\'2\'}';
           assert.equal(result, compare);
@@ -305,8 +292,8 @@
           element.queryPropertiesNegation = true;
           element.mimeType = 'testMime';
           element.query = 'testQuery';
-          var result = element._buildQuery();
-          var compare = 'trashed = false';
+          const result = element._buildQuery();
+          let compare = 'trashed = false';
           compare += ' and mimeType="testMime"';
           compare += ' and not properties has {key=\'a\' and value=\'1\'}';
           compare += ' and not properties has {key=\'b\' and value=\'2\'}';

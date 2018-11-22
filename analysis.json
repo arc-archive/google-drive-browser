@@ -611,11 +611,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 86,
+              "line": 85,
               "column": 8
             },
             "end": {
-              "line": 86,
+              "line": 85,
               "column": 28
             }
           },
@@ -632,11 +632,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 88,
+              "line": 87,
               "column": 8
             },
             "end": {
-              "line": 88,
+              "line": 87,
               "column": 21
             }
           },
@@ -2831,11 +2831,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 92,
+              "line": 91,
               "column": 4
             },
             "end": {
-              "line": 102,
+              "line": 101,
               "column": 5
             }
           },
@@ -3790,11 +3790,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 81,
+          "line": 80,
           "column": 2
         },
         "end": {
-          "line": 109,
+          "line": 108,
           "column": 3
         }
       },
@@ -3807,11 +3807,11 @@
           "description": "True to indicate that the app is being authorized.",
           "sourceRange": {
             "start": {
-              "line": 86,
+              "line": 85,
               "column": 8
             },
             "end": {
-              "line": 86,
+              "line": 85,
               "column": 28
             }
           },
@@ -3823,11 +3823,11 @@
           "description": "Scope to call with authorize action.",
           "sourceRange": {
             "start": {
-              "line": 88,
+              "line": 87,
               "column": 8
             },
             "end": {
-              "line": 88,
+              "line": 87,
               "column": 21
             }
           },
@@ -8528,11 +8528,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 117,
+              "line": 116,
               "column": 8
             },
             "end": {
-              "line": 117,
+              "line": 116,
               "column": 20
             }
           },
@@ -10727,11 +10727,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 121,
+              "line": 120,
               "column": 4
             },
             "end": {
-              "line": 125,
+              "line": 124,
               "column": 5
             }
           },
@@ -10747,11 +10747,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 127,
+              "line": 126,
               "column": 4
             },
             "end": {
-              "line": 142,
+              "line": 141,
               "column": 5
             }
           },
@@ -11706,11 +11706,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 112,
+          "line": 111,
           "column": 2
         },
         "end": {
-          "line": 143,
+          "line": 142,
           "column": 3
         }
       },
@@ -11723,11 +11723,11 @@
           "description": "A drive file object",
           "sourceRange": {
             "start": {
-              "line": 117,
+              "line": 116,
               "column": 8
             },
             "end": {
-              "line": 117,
+              "line": 116,
               "column": 20
             }
           },

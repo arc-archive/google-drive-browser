@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "description": "A file browser for Google Drive",
   "devDependencies": {
-    "@polymer/gen-typescript-declarations": "^1.1.1"
+    "@polymer/gen-typescript-declarations": "^1.5.1"
   },
   "private": false,
   "main": "google-drive-browser.html",

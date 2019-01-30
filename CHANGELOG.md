@@ -127,3 +127,19 @@
 
 
 
+# [2.0.0](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.12...2.0.0) (2019-01-30)
+
+
+### Docs
+
+* Adding polymer documentation ([bad7199930d3f5d664acd1b1bb21dbb09236e36c](https://github.com/advanced-rest-client/google-drive-browser/commit/bad7199930d3f5d664acd1b1bb21dbb09236e36c))
+* Updating Polymer docs ([c782e79fa182b7268a7557db0ce6ae974342ba23](https://github.com/advanced-rest-client/google-drive-browser/commit/c782e79fa182b7268a7557db0ce6ae974342ba23))
+
+### Update
+
+* Removing metadata oauth scope ([878357e8abf5b16518e0f8baa1ddd13120ea22ff](https://github.com/advanced-rest-client/google-drive-browser/commit/878357e8abf5b16518e0f8baa1ddd13120ea22ff))
+* Updating test to reach minimum coverage ([cfff02d8145e8943589fcf6f232e212657424c7a](https://github.com/advanced-rest-client/google-drive-browser/commit/cfff02d8145e8943589fcf6f232e212657424c7a))
+* Updating tests ([5ef10e1190bc2410bdbeca5020c05c7514043ff5](https://github.com/advanced-rest-client/google-drive-browser/commit/5ef10e1190bc2410bdbeca5020c05c7514043ff5))
+
+
+

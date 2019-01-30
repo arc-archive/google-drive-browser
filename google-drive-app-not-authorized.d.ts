@@ -8,6 +8,10 @@
  *   google-drive-app-not-authorized.html
  */
 
+
+// tslint:disable:variable-name Describing an API that's defined elsewhere.
+// tslint:disable:no-any describes the API as best we are able today
+
 /// <reference path="../polymer/types/polymer-element.d.ts" />
 /// <reference path="../paper-button/paper-button.d.ts" />
 /// <reference path="../iron-flex-layout/iron-flex-layout.d.ts" />
@@ -32,6 +36,7 @@ declare namespace UiElements {
     item: object|null|undefined;
     back(): void;
     openDrive(): void;
+    _dispatchOpenExtarnal(url: any): any;
   }
 }
 

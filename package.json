@@ -1,6 +1,6 @@
 {
-  "name": "google-drive-browser",
-  "version": "2.0.0-preview",
+  "name": "@advances-rest-client/google-drive-browser",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "description": "A file browser for Google Drive",
   "devDependencies": {

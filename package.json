@@ -1,24 +1,18 @@
 {
   "name": "google-drive-browser",
-  "version": "0.1.13",
-  "license": "Apache-2.0 OR CC-BY-4.0",
+  "version": "2.0.0-preview",
+  "license": "Apache-2.0",
   "description": "A file browser for Google Drive",
   "devDependencies": {
-    "bower": "^1.8.0",
-    "polymer-cli": "^1.2.0"
+    "@polymer/gen-typescript-declarations": "^1.6.1"
   },
   "private": false,
-  "main": [
-    "google-drive-browser.html"
-  ],
-  "author": "The Advanced REST client authors <arc@mulesoft.com>",
+  "main": "google-drive-browser.html",
   "scripts": {
-    "serve": "node_modules/.bin/polymer serve",
-    "lint": "node_modules/.bin/polymer lint google-drive-browser.html google-drive-authorize.html google-drive-app-not-authorized.html --rules polymer-1",
-    "test-sauce": "node_modules/.bin/polymer test --plugin sauce --job-name \"google-drive-browser:local-test\"",
-    "test": "node_modules/.bin/polymer test --plugin local",
-    "deps": "npm install --quiet && bower install --quiet",
-    "update-deps": "npm update --quiet && bower update --quiet"
+    "lint": "polymer lint google-drive-browser.html",
+    "test-sauce": "polymer test --plugin sauce --job-name \"google-drive-browser:local-test\"",
+    "test": "polymer test --plugin local",
+    "update-types": "gen-typescript-declarations --deleteExisting --outDir ."
   },
   "repository": {
     "type": "git",
@@ -27,5 +21,9 @@
   "bugs": {
     "url": "https://github.com/advanced-rest-client/google-drive-browser/issues",
     "email": "arc@mulesoft.com"
-  }
+  },
+  "authors": [
+    "Pawel Psztyc",
+    "The Advanced REST client authors <arc@mulesoft.com>"
+  ]
 }

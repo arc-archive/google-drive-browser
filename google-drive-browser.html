@@ -1,6 +1,6 @@
 <!--
 @license
-Copyright 2017 The Advanced REST client authors <arc@mulesoft.com>
+Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License. You may obtain a copy of
 the License at
@@ -11,10 +11,10 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/utils/render-status.html">
 <link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
-<link rel="import" href="../openable-panel-behavior/openable-panel-behavior.html">
 <link rel="import" href="../paper-progress/paper-progress.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../error-message/error-message.html">
@@ -24,32 +24,6 @@ the License.
 <link rel="import" href="google-drive-list-view.html">
 <link rel="import" href="google-drive-app-not-authorized.html">
 
-<!--
-A file browser for Google Drive
-
-Required properties are `accessToken` and `apiKey`.
-
-### Example
-```
-<google-drive-browser></google-drive-browser>
-```
-
-### Styling
-`<google-drive-browser>` provides the following custom properties and mixins for styling:
-
-Custom property | Description | Default
-----------------|-------------|----------
-`--google-drive-browser` | Mixin applied to the element | `{}`
-`--arc-font-headline` | Mixin applied to the header | `{}`
-`--action-button` | Mixin applied to the main action button | `{}`
-`--secondary-action-button-color` | Color of the secondary acction button | `--primary-color`
-`--google-drive-list-view-min-height` | The minimum height of the list element | `400px`
-`--google-drive-browser-title` | Mixin applied to the headers | `{}`
-
-@group UI Elements
-@element google-drive-browser
-@demo demo/index.html
--->
 <dom-module id="google-drive-browser">
   <template>
     <style>
@@ -85,11 +59,12 @@ Custom property | Description | Default
         on-load-next-page="_queryFiles"
         on-drive-file-search="_onSearch"
         on-drive-file-open="_onOpenFile"
+        on-refresh-list="refresh"
         on-app-not-authorized-error="_appNotAuthorizedHandler"></google-drive-list-view>
       <section>
         <error-message>
           <p>[[errorMessage]]</p>
-          <paper-button on-tap="showList" class="main-action">Back to the list</paper-button>
+          <paper-button on-click="showList" class="main-action">Back to the list</paper-button>
         </error-message>
       </section>
       <google-drive-app-not-authorized on-back="showList"></google-drive-app-not-authorized>
@@ -109,186 +84,208 @@ Custom property | Description | Default
       debounce-duration="300"></iron-ajax>
   </template>
   <script>
-  Polymer({
-    is: 'google-drive-browser',
-    behaviors: [
-      ArcBehaviors.OpenablePanelBehavior,
-      ArcBehaviors.EventsTargetBehavior
-    ],
-
-    /**
-     * Fired when the file content is ready.
-     *
-     * @event drive-file-picker-data
-     * @param {String} content File content downloaded from the drive.
-     * @param {String} driveId Drive file ID
-     */
-
-    properties: {
-      // True if Google Drive operation pending
-      loading: {
-        type: Boolean,
-        notify: true
-      },
-      /**
-       * File search term entered by the user.
-       */
-      query: String,
-      /**
-       * List of files retreived from Drive API.
-       */
-      items: Array,
-      /**
-       * OAuth2 scope for drive.
-       */
-      scope: {
-        type: String,
-        value: function() {
-          var scope = 'https://www.googleapis.com/auth/drive.file ';
-          scope += 'https://www.googleapis.com/auth/drive.install ';
-          scope += 'https://www.googleapis.com/auth/drive.metadata.readonly';
-          return scope;
+  /**
+   * A file browser for Google Drive
+   *
+   * Required properties are `accessToken` and `apiKey`.
+   *
+   * ## List sizing
+   *
+   * The list uses `iron-list` which requires to be sized. It has to have
+   * a height otherwise it will have height of 0.
+   *
+   * You can use flex layout to streach the component to the height of the page
+   * or just add `height: 100%` to the element styles.
+   *
+   * ## Styling
+   *
+   * Custom property | Description | Default
+   * ----------------|-------------|----------
+   * `--google-drive-browser` | Mixin applied to the element | `{}`
+   * `--arc-font-headline` | Mixin applied to the header | `{}`
+   * `--action-button` | Mixin applied to the main action button | `{}`
+   * `--secondary-action-button-color` | Color of the secondary acction button | `--primary-color`
+   * `--google-drive-browser-title` | Mixin applied to the headers | `{}`
+   *
+   * @customElement
+   * @polymer
+   * @demo demo/index.html
+   * @memberof UiElements
+   * @appliesMixin ArcBehaviors.EventsTargetBehavior
+   */
+  class GoogleDriveBrowser extends ArcBehaviors.EventsTargetBehavior(Polymer.Element) {
+    static get is() {return 'google-drive-browser';}
+    static get properties() {
+      return {
+        // True if Google Drive operation pending
+        loading: {
+          type: Boolean,
+          notify: true
+        },
+        /**
+         * File search term entered by the user.
+         */
+        query: String,
+        /**
+         * List of files retreived from Drive API.
+         */
+        items: Array,
+        /**
+         * OAuth2 scope for drive.
+         */
+        scope: {
+          type: String,
+          value() {
+            let scope = 'https://www.googleapis.com/auth/drive.file ';
+            scope += 'https://www.googleapis.com/auth/drive.install';
+            return scope;
+          }
+        },
+        /**
+         * An error message from the API if any.
+         */
+        errorMessage: String,
+        /**
+         * If set it generates a query to Google Drive that contains query to file
+         * properies.
+         * E.g. (part of the query):
+         * ```
+         * and properties has { key='propertyKey' and value='propertyValue'}
+         * ```
+         *
+         * Keys of this object will be put into the `key` part of query and
+         * value of the key to the `value` property.
+         *
+         * For example:
+         * ```
+         * queryProperties = {
+         *   'isExport': true
+         * }
+         * ```
+         */
+        queryProperties: Object,
+        /**
+         * If true then it uses a negation for `queryProperties` (adding `not`)
+         * before the query
+         */
+        queryPropertiesNegation: Boolean,
+        // A `pageSize` property value to be send to Drive endpoint.
+        querySize: {
+          type: Number,
+          value: 50
+        },
+        /**
+         * Mime type of the file to search.
+         */
+        mimeType: String,
+        /**
+         * Currently opened view
+         */
+        selectedView: {
+          type: Number,
+          readOnly: true
+        },
+        /**
+         * Query parameters to be set with a file query call.
+         */
+        queryParams: {
+          type: Object,
+          readOnly: true
+        },
+        // OAuth 2 access token.
+        accessToken: {
+          type: String,
+          observer: '_accessTokenChanged'
+        },
+        /**
+         * API key that is required to use the API
+         */
+        apiKey: String,
+        /**
+         * Used when paginating over results, returned from Drive API.
+         */
+        _nextPageToken: String,
+        /**
+         * Current drive file ID.
+         */
+        _fileId: String,
+        // True when there's no more result for current query.
+        hasMore: {
+          type: Boolean,
+          readOnly: true,
+          value: true,
+          notify: true
+        },
+        /**
+         * A fileds projection requested from the Drive API.
+         * Fields listed here are returned by the Drive query endpoint.
+         */
+        fieldsProjection: {
+          type: String,
+          readOnly: true,
+          value() {
+            let fields = 'files(capabilities/canEdit,capabilities/canDownload,isAppAuthorized';
+            fields += ',createdTime,id,name,shared,size,webViewLink),nextPageToken';
+            return fields;
+          }
         }
-      },
-      /**
-       * An error message from the API if any.
-       */
-      errorMessage: String,
-      /**
-       * If set it generates a query to Google Drive that contains query to file
-       * properies.
-       * E.g. (part of the query):
-       * ```
-       * and properties has { key='propertyKey' and value='propertyValue'}
-       * ```
-       *
-       * Keys of this object will be put into the `key` part of query and
-       * value of the key to the `value` property.
-       *
-       * For example:
-       * ```
-       * queryProperties = {
-       *   'isExport': true
-       * }
-       * ```
-       */
-      queryProperties: Object,
-      /**
-       * If true then it uses a negation for `queryProperties` (adding `not`)
-       * before the query
-       */
-      queryPropertiesNegation: Boolean,
-      // A `pageSize` property value to be send to Drive endpoint.
-      querySize: {
-        type: Number,
-        value: 50
-      },
-      /**
-       * Mime type of the file to search.
-       */
-      mimeType: String,
-      /**
-       * Currently opened view
-       */
-      selectedView: {
-        type: Number,
-        readOnly: true
-      },
-      /**
-       * Query parameters to be set with a file query call.
-       */
-      queryParams: {
-        type: Object,
-        readOnly: true
-      },
-      // OAuth 2 access token.
-      accessToken: {
-        type: String,
-        observer: '_accessTokenChanged'
-      },
-      /**
-       * API key that is required to use the API
-       */
-      apiKey: String,
-      /**
-       * Used when paginating over results, returned from Drive API.
-       */
-      _nextPageToken: String,
-      /**
-       * Current drive file ID.
-       */
-      _fileId: String,
-      // True when there's no more result for current query.
-      hasMore: {
-        type: Boolean,
-        readOnly: true,
-        value: true,
-        notify: true
-      },
-      /**
-       * A fileds projection requested from the Drive API.
-       * Fields listed here are returned by the Drive query endpoint.
-       */
-      fieldsProjection: {
-        type: String,
-        readOnly: true,
-        value: function() {
-          let fields = 'files(capabilities/canEdit,capabilities/canDownload,isAppAuthorized';
-          fields += ',createdTime,id,name,shared,size,webViewLink),nextPageToken';
-          return fields;
-        }
-      }
-    },
+      };
+    }
 
-    observers: [
-      '_openedChanged(_isOpened)'
-    ],
+    constructor() {
+      super();
+      this._signedinHandler = this._signedinHandler.bind(this);
+      this._signoutHandler = this._signoutHandler.bind(this);
+    }
 
-    _attachListeners: function(node) {
-      this.listen(node, 'google-signin-success', '_signedinHandler');
-      this.listen(node, 'google-signout', '_signoutHandler');
-    },
+    _attachListeners(node) {
+      node.addEventListener('google-signin-success', this._signedinHandler);
+      node.addEventListener('google-signout', this._signoutHandler);
+      this._initView();
+    }
 
-    _detachListeners: function(node) {
-      this.unlisten(node, 'google-signin-success', '_signedinHandler');
-      this.unlisten(node, 'google-signout', '_signoutHandler');
-    },
+    _detachListeners(node) {
+      node.removeEventListener('google-signin-success', this._signedinHandler);
+      node.removeEventListener('google-signout', this._signoutHandler);
+    }
     /**
      * Handler for the `google-signin-success` event. If the `scope`
      * property set on the `detail` object matches `scope` set on this element
      * then it sets the `accessToken` property from detail's `token` property.
+     *
+     * @param {CustomEvent} e
      */
-    _signedinHandler: function(e) {
-      this.$$('google-drive-authorize').authorizing = false;
+    _signedinHandler(e) {
+      this.shadowRoot.querySelector('google-drive-authorize').authorizing = false;
       if (!this._hasScope(e.detail.scope)) {
         return;
       }
       this.accessToken = e.detail.token;
-    },
+    }
     /**
      * Handler for the `google-signin-success` custom event.
      * Clears the `accessToken` property.
      */
-    _signoutHandler: function() {
+    _signoutHandler() {
       this.accessToken = undefined;
-      this.$$('google-drive-authorize').authorizing = false;
-    },
+      this.shadowRoot.querySelector('google-drive-authorize').authorizing = false;
+    }
     /**
      * Checks if current `scope` matches passed `scope` value.
      * @param {String} scope Scope to check
      * @return {Boolean} True if `scope` set on this element matches passed value.
      */
-    _hasScope: function(scope) {
+    _hasScope(scope) {
       if (!scope) {
         return false;
       }
-      var localScope = this.scope;
+      const localScope = this.scope;
       if (!localScope) {
         return true;
       }
-      var scopes = localScope.split(' ');
-      var hasScope = false;
-      for (var i = 0, len = scopes.length; i < len; i++) {
+      const scopes = localScope.split(' ');
+      let hasScope = false;
+      for (let i = 0, len = scopes.length; i < len; i++) {
         let localScope = scopes[i].trim();
         if (!localScope) {
           continue;
@@ -299,67 +296,65 @@ Custom property | Description | Default
         }
       }
       return hasScope;
-    },
+    }
     // Chooses a view depending on athorization value.
-    _openedChanged: function(opened) {
-      if (!opened) {
-        return;
-      }
+    _initView() {
       if (!this.accessToken) {
         return this._setSelectedView(0);
       }
       if (!this.apiKey) {
-        throw new Error('API key not set.');
+        console.warn('API key not set.');
+        return;
       }
       this._setSelectedView(1);
       if (!this.items) {
         this._queryFiles();
       }
-    },
+    }
     // Resets the view when token value change.
-    _accessTokenChanged: function(token) {
+    _accessTokenChanged(token) {
       this._setAuthHeader(token);
       if (!token) {
         this._setSelectedView(0);
       } else {
         this._setSelectedView(1);
-        if (!this.items && this._isOpened) {
+        if (!this.items) {
           this._queryFiles();
         }
       }
-    },
+    }
 
     // Forces the view to display list view.
-    showList: function() {
+    showList() {
       this._setSelectedView(1);
-    },
+    }
 
     /**
      * Query for the files on Google Drive.
      */
-    _queryFiles: function() {
-      if (this.loading || !this._isOpened || !this.accessToken || !this.hasMore) {
+    _queryFiles() {
+      if (this.loading || !this.accessToken || !this.hasMore) {
         return;
       }
       this.loading = true;
       this._setQueryParameters();
       this.$.query.generateRequest();
-    },
+    }
     /**
      * Builds the query (`q`) parameter for Google Drive API.
      *
      * @return {String} A value for the `q` query parameter
      */
-    _buildQuery: function() {
-      var q = 'trashed = false';
-      var mt = this.mimeType;
+    _buildQuery() {
+      let q = 'trashed = false';
+      const mt = this.mimeType;
       if (mt) {
         q += ' and mimeType="' + mt + '"';
       }
-      var qp = this.queryProperties;
+      const qp = this.queryProperties;
       if (qp) {
-        let negation = this.queryPropertiesNegation ? ' not' : '';
-        Object.keys(qp).forEach(key => {
+        const negation = this.queryPropertiesNegation ? ' not' : '';
+        Object.keys(qp).forEach((key) => {
           q += ` and${negation} properties has {key='${key}' and value='${qp[key]}'}`;
         });
       }
@@ -367,12 +362,12 @@ Custom property | Description | Default
         q += ` and name contains '${this.query}'`;
       }
       return q;
-    },
+    }
     /**
      * Updates the `queryParams` property for current UI state.
      */
-    _setQueryParameters: function() {
-      var params = {
+    _setQueryParameters() {
+      const params = {
         'q': this._buildQuery(),
         'pageSize': this.querySize,
         'fields': this.fieldsProjection,
@@ -383,48 +378,52 @@ Custom property | Description | Default
         params.pageToken = this._nextPageToken;
       }
       this._setQueryParams(params);
-    },
+    }
     /**
      * Sets the authorization header on the Ajax request objects. It affects
      * query and download requests.
      *
      * @param {String} at Access token value. If empty it clears the headers.
      */
-    _setAuthHeader: function(at) {
-      var headers = {};
+    _setAuthHeader(at) {
+      const headers = {};
       if (at) {
         headers.authorization = 'Bearer ' + this.accessToken;
       }
       this.$.query.headers = headers;
       this.$.download.headers = headers;
-    },
+    }
 
+    refresh() {
+      this._resetQuery();
+    }
     /**
      * Called when user accept search query.
+     * @param {CustomEvent} e
      */
-    _onSearch: function(e) {
+    _onSearch(e) {
       this.query = e.detail.q;
       this._resetQuery();
-    },
+    }
     /**
      * Reset current query data.
      */
-    _resetQuery: function() {
+    _resetQuery() {
       this._nextPageToken = undefined;
       this._setHasMore(true);
       this.items = undefined;
       this._queryFiles();
-    },
+    }
 
     /**
      * Handler for the Drive list response.
      */
-    _onDriveListResponse: function() {
+    _onDriveListResponse() {
       this.loading = false;
-      var response = this.$.query.lastResponse;
+      const response = this.$.query.lastResponse;
       this._nextPageToken = response.nextPageToken;
-      var items = response.files;
-      var hasItems = !!(items && items.length);
+      const items = response.files;
+      const hasItems = !!(items && items.length);
       if (!response.nextPageToken || !hasItems) {
         this._setHasMore(false);
       }
@@ -432,22 +431,24 @@ Custom property | Description | Default
         return;
       }
       if (!this.items) {
-        return this.set('items', items);
+        this.set('items', items);
+        return;
       }
-      response.files.forEach(item => {
+      response.files.forEach((item) => {
         this.push('items', item);
       });
-    },
+    }
 
     /**
      * Ajax call to Drive API error handler
+     * @param {CustomEvent} e
      */
-    _handleDriveApiError: function(e) {
+    _handleDriveApiError(e) {
       this.loading = false;
-      var message;
-      var response = e.detail.request.xhr.response;
+      let message;
+      let response = e.detail.request.xhr.response;
       if (typeof response === 'string') {
-        response = JSON.parse(e.detail.request.xhr.response);
+        response = JSON.parse(response);
       }
       switch (e.detail.request.status) {
         case 0:
@@ -464,7 +465,6 @@ Custom property | Description | Default
           message = 'The app caused the error in request: ' + response.error.errors[0].message;
           break;
         case 401:
-          message = 'The access token is either expired or invalid';
           this._setSelectedView(0);
           return;
         case 403:
@@ -479,17 +479,17 @@ Custom property | Description | Default
               message = 'You reached your requests limit for Drive. Try again tomorrow.';
               break;
             case 'appNotAuthorizedToFile':
-              //The requesting app is not on the ACL for the file. The user never explicitly opened
-              //the file with this Drive app.
-              var id = this._fileId;
-              var file = this.items.find(item => item.id === id);
+              // The requesting app is not on the ACL for the file. The user never explicitly opened
+              // the file with this Drive app.
+              const id = this._fileId;
+              const file = this.items.find((item) => item.id === id);
               this._explainAppNotAuthorized(file);
               return;
-            case 'dailyLimitExceeded':
-              message = 'You do not have sufficient permissions for the file.';
+            case 'insufficientFilePermissions':
+              message = 'You do not have sufficient permissions to the file.';
               break;
             case 'domainPolicy':
-              //The policy for the user's domain does not allow access to Google Drive by your app.
+              // The policy for the user's domain does not allow access to Google Drive by your app.
               message = 'The policy for your domain does not allow access to Google Drive ' +
                 'by your app.';
               break;
@@ -499,68 +499,80 @@ Custom property | Description | Default
           }
           break;
         case 404:
-          message = 'File not found (404)';
+          message = 'File not found (404).';
           break;
         case 500:
-          message = 'Backend error: an unexpected error occurred while processing the request.';
+          message = 'Drive error: an unexpected error occurred while processing the request.';
           break;
       }
       this.errorMessage = message;
       this._setSelectedView(2);
-    },
+    }
     /**
      * If an item wasn't created by the application or never opened by it,
      * it is not possible to open an item with the API> User has to gi to
      * Drive UI and opend with ARC using Drive UI.
      * This opens the page that describe the issue.
+     *
+     * @param {Object} file
      */
-    _explainAppNotAuthorized: function(file) {
-      this.$$('google-drive-app-not-authorized').item = file;
+    _explainAppNotAuthorized(file) {
+      this.shadowRoot.querySelector('google-drive-app-not-authorized').item = file;
       this._setSelectedView(3);
-    },
-
+    }
     /**
      * Handler when user select a file from file picker.
+     *
+     * @param {CustomEvent} e
      */
-    _onOpenFile: function(e) {
+    _onOpenFile(e) {
       this._downloadFile(e.detail.item.id);
-    },
+    }
     /**
      * Download and read a Google Drive item.
      *
      * @param {String} id An item ID. This will show an error if the file wasn't created by this app
      * (e.g. old version of the app).
      */
-    _downloadFile: function(id) {
+    _downloadFile(id) {
       if (!id) {
-        this.fire('app-log', {'message': 'Trying to open Drive item without ID', 'level': 'warning'});
-        return;
-      }
-      if (!this._isOpened) {
+        console.error('Trying to open Drive item without ID');
         return;
       }
       this.loading = true;
       this._fileId = id;
       this.$.download.generateRequest();
-    },
-
+    }
     /**
      * Ajax call success handler for file download.
      */
-    _handleDownloadResponse: function() {
+    _handleDownloadResponse() {
       this.loading = false;
-      var response = this.$.download.lastResponse;
-      this.fire('drive-file-picker-data', {
-        content: response,
-        diveId: this._fileId
-      });
+      const response = this.$.download.lastResponse;
+      this.dispatchEvent(new CustomEvent('drive-file-picker-data', {
+        composed: true,
+        bubbles: true,
+        cancelable: true,
+        detail: {
+          content: response,
+          diveId: this._fileId
+        }
+      }));
       this._fileId = undefined;
-    },
+    }
     // Handles event sent by the list to display download info.
-    _appNotAuthorizedHandler: function(e) {
-      var item = e.detail.item;
+    _appNotAuthorizedHandler(e) {
+      const item = e.detail.item;
       this._explainAppNotAuthorized(item);
     }
-  });
+    /**
+     * Fired when the file content is ready.
+     *
+     * @event drive-file-picker-data
+     * @param {String} content File content downloaded from the drive.
+     * @param {String} driveId Drive file ID
+     */
+  }
+  window.customElements.define(GoogleDriveBrowser.is, GoogleDriveBrowser);
   </script>
 </dom-module>

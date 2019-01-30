@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
   </head>
   <body>
@@ -11,7 +11,9 @@
       /* global WCT */
       WCT.loadSuites([
         'google-drive-browser-test.html',
-        'google-drive-browser-test.html?dom=shadow'
+        'google-drive-app-not-authorized-test.html',
+        'google-drive-authorize-test.html',
+        'google-drive-list-view-test.html'
       ]);
     </script>
   </body>

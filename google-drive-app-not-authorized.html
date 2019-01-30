@@ -1,6 +1,6 @@
 <!--
 @license
-Copyright 2017 The Advanced REST client authors <arc@mulesoft.com>
+Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License. You may obtain a copy of
 the License at
@@ -11,15 +11,10 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<!--
-An element that explains why the user can't open the file with the application
-because the app is not on file's ACL list.
 
-@element google-drive-app-not-authorized
--->
 <dom-module id="google-drive-app-not-authorized">
   <template>
     <style>
@@ -40,12 +35,11 @@ because the app is not on file's ACL list.
 
     p {
       margin: 1em 0;
-      color: rgba(0,0,0,0.78);
     }
 
     p.hint {
       margin: 1em 0;
-      color: var(--google-drive-app-not-authorized-hint-color, rgba(0,0,0,0.54));
+      color: var(--google-drive-app-not-authorized-hint-color, currentColor);
     }
 
     .actions {
@@ -59,7 +53,7 @@ because the app is not on file's ACL list.
     }
 
     .secondary-action {
-      color: var(--secondary-action-button-color, --primary-color);
+      color: var(--secondary-action-button-color, var(--primary-color));
       height: 36px;
       font-size: 14px;
     }
@@ -85,37 +79,73 @@ because the app is not on file's ACL list.
     <h2>Open file via Drive UI</h2>
     <div>
       <p>The file <b>[[item.name]]</b> can't be opened by the app because it <b>wansn't created by this application</b>.</p>
-      <p>Please go to Drive web application, select the file and choose "Open with" and then this application name.</p>
+      <p>Please, open Google Drive web application, select the file and choose "Open with" and then this application name.</p>
       <p class="hint">You have to do this only once for each file.</p>
 
       <section class="link-info">
         <label for="itemViewLink">Link to the file</label>
-        <code id="itemViewLink" on-tap="openDrive">[[item.webViewLink]]</code>
+        <code id="itemViewLink" on-click="openDrive">[[item.webViewLink]]</code>
       </section>
 
       <div class="actions">
-        <paper-button raised class="main-action" on-tap="openDrive">Open the file in Drive UI</paper-button>
-        <paper-button on-tap="back" class="secondary-action">Back to the list</paper-button>
+        <paper-button raised class="main-action" on-click="openDrive">Open file in Drive UI</paper-button>
+        <paper-button on-click="back" class="secondary-action">Back to the list</paper-button>
       </div>
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'google-drive-app-not-authorized',
-
-      properties: {
+  /**
+   * An element that explains why the user can't open the file with
+   * the application because the app is not on file's ACL list.
+   *
+   * Custom property | Description | Default
+   * ----------------|-------------|----------
+   * `--google-drive-app-not-authorized` | Mixin applied to this elment | `{}`
+   * `--google-drive-browser-title` | | `{}`
+   * `--google-drive-app-not-authorized-hint-color` | | `rgba(0,0,0,0.54)`
+   *
+   * @customElement
+   * @polymer
+   * @demo demo/index.html
+   * @memberof UiElements
+   */
+  class GoogleDriveAppNotAuthorized extends Polymer.Element {
+    static get is() {
+      return 'google-drive-app-not-authorized';
+    }
+    static get properties() {
+      return {
         // A drive file object
         item: Object
-      },
+      };
+    }
 
-      back: function() {
-        this.fire('back');
-      },
+    back() {
+      this.dispatchEvent(new CustomEvent('back'));
+    }
 
-      openDrive: function() {
-        var url = this.item.webViewLink;
-        window.open(url);
+    openDrive() {
+      const url = this.item.webViewLink;
+      const e = this._dispatchOpenExtarnal(url);
+      if (e.defaultPrevented) {
+        return;
       }
-    });
+      window.open(url);
+    }
+
+    _dispatchOpenExtarnal(url) {
+      const e = new CustomEvent('open-external-url', {
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+        detail: {
+          url
+        }
+      });
+      this.dispatchEvent(e);
+      return e;
+    }
+  }
+  window.customElements.define(GoogleDriveAppNotAuthorized.is, GoogleDriveAppNotAuthorized);
   </script>
 </dom-module>

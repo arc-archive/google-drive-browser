@@ -26,16 +26,7 @@ const DriveServer = {
   mockList: function() {
     const url = /^https:\/\/www\.googleapis\.com\/drive\/v3\/files\?*/;
     this.srv.respondWith('GET', url, function(request) {
-      const files = [];
-      for (let i = 0; i < DriveServer.responseSize; i++) {
-        files.push(DriveServer.createFileObject());
-      }
-      const result = {
-        files
-      };
-      if (DriveServer.addNextPageToken) {
-        result.nextPageToken = chance.string();
-      }
+      const result = DriveServer.generateResponse(DriveServer.responseSize, DriveServer.addNextPageToken);
       request.respond(200, {}, JSON.stringify(result));
     });
   },
@@ -48,6 +39,21 @@ const DriveServer = {
       }, 'test');
     });
   },
+
+  generateResponse: function(size, addPageToken) {
+    const files = [];
+    for (let i = 0; i < size; i++) {
+      files.push(DriveServer.createFileObject());
+    }
+    const result = {
+      files
+    };
+    if (addPageToken) {
+      result.nextPageToken = chance.string();
+    }
+    return result;
+  },
+
   // Creates a duppmy Drive file object
   createFileObject: function() {
     const created = chance.date();

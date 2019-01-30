@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../google-drive-authorize.html">
+  </head>
+  <body>
+
+    <test-fixture id="Basic">
+      <template>
+        <google-drive-authorize scope="test-scope"></google-drive-authorize>
+      </template>
+    </test-fixture>
+
+    <script>
+    suite('authorize()', () => {
+      let element;
+      setup(() => {
+        element = fixture('Basic');
+      });
+
+      test('Disaptches open-external-url event', () => {
+        const spy = sinon.spy();
+        element.addEventListener('google-autorize', spy);
+        element.authorize();
+        assert.isTrue(spy.called);
+      });
+
+      test('Event bubbles', () => {
+        const spy = sinon.spy();
+        element.addEventListener('google-autorize', spy);
+        element.authorize();
+        const e = spy.args[0][0];
+        assert.isTrue(e.bubbles);
+      });
+
+      test('Event is composed', () => {
+        const spy = sinon.spy();
+        element.addEventListener('google-autorize', spy);
+        element.authorize();
+        const e = spy.args[0][0];
+        if (e.composed !== undefined) { // edge
+          assert.isTrue(e.composed);
+        }
+      });
+
+      test('Event is cancelable', () => {
+        const spy = sinon.spy();
+        element.addEventListener('google-autorize', spy);
+        element.authorize();
+        const e = spy.args[0][0];
+        assert.isTrue(e.cancelable);
+      });
+
+      test('Detail has scope', () => {
+        const spy = sinon.spy();
+        element.addEventListener('google-autorize', spy);
+        element.authorize();
+        const e = spy.args[0][0];
+        assert.equal(e.detail.scope, 'test-scope');
+      });
+    });
+    </script>
+
+  </body>
+</html>

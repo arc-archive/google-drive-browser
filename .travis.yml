@@ -1,9 +1,9 @@
 language: node_js
-node_js: stable
+node_js: 8
 sudo: required
 before_script:
-  - npm install -g polymer-cli
-  - polymer install --variants
+  - npm install -g polymer-cli istanbul wct-istanbub
+  - polymer install
 addons:
   firefox: latest
   apt:
@@ -22,8 +22,6 @@ script:
 cache:
   directories:
     - node_modules
-after_success:
-  - node tasks/ci.js
 env:
   global:
     - secure: >-

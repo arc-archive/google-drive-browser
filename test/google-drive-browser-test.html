@@ -74,9 +74,10 @@
           assert.isUndefined(element._fileId);
         });
 
-        test('selectedView is computed', function() {
-          Polymer.RenderStatus.afterNextRender(this, () => {
+        test('selectedView is computed', function(done) {
+          Polymer.RenderStatus.afterNextRender(element, () => {
             assert.equal(element.selectedView, 0);
+            done();
           });
         });
 
@@ -348,6 +349,84 @@
           element._nextPageToken = 'testToken';
           element._setQueryParameters();
           assert.equal(element.queryParams.pageToken, 'testToken');
+        });
+      });
+
+      suite('showList()', () => {
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('Sets selectedView', () => {
+          element.showList();
+          assert.equal(element.selectedView, 1);
+        });
+      });
+
+      suite('refresh()', () => {
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('Calls _resetQuery()', () => {
+          const spy = sinon.spy(element, '_resetQuery');
+          element.refresh();
+          assert.isTrue(spy.called);
+        });
+      });
+
+      suite('_onSearch()', () => {
+        let element;
+        let ev;
+        setup(function() {
+          element = fixture('basic');
+          ev = {
+            detail: {
+              q: 'test-q'
+            }
+          };
+        });
+
+        test('Calls _resetQuery()', () => {
+          const spy = sinon.spy(element, '_resetQuery');
+          element._onSearch(ev);
+          assert.isTrue(spy.called);
+        });
+
+        test('Sets query', () => {
+          element._onSearch(ev);
+          assert.equal(element.query, 'test-q');
+        });
+      });
+
+      suite('_resetQuery()', () => {
+        let element;
+        setup(function() {
+          element = fixture('basic');
+          element._nextPageToken = 'test-token';
+          element._setHasMore(false);
+          element.items = [];
+        });
+
+        test('Calls _queryFiles()', () => {
+          const spy = sinon.spy(element, '_queryFiles');
+          element._resetQuery();
+          assert.isTrue(spy.called);
+        });
+
+        test('Resets _nextPageToken', () => {
+          element._resetQuery();
+          assert.isUndefined(element._nextPageToken);
+        });
+
+        test('Resets hasMore', () => {
+          element._resetQuery();
+          assert.isTrue(element.hasMore);
+        });
+
+        test('Resets items', () => {
+          element._resetQuery();
+          assert.isUndefined(element.items);
         });
       });
     });

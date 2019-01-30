@@ -110,7 +110,9 @@ the License.
    * @memberof UiElements
    */
   class GoogleDriveAppNotAuthorized extends Polymer.Element {
-    static get is() {return 'google-drive-app-not-authorized';}
+    static get is() {
+      return 'google-drive-app-not-authorized';
+    }
     static get properties() {
       return {
         // A drive file object
@@ -119,13 +121,19 @@ the License.
     }
 
     back() {
-      this.dispatchEvent(new CustomEvent('back', {
-        composed: true
-      }));
+      this.dispatchEvent(new CustomEvent('back'));
     }
 
     openDrive() {
       const url = this.item.webViewLink;
+      const e = this._dispatchOpenExtarnal(url);
+      if (e.defaultPrevented) {
+        return;
+      }
+      window.open(url);
+    }
+
+    _dispatchOpenExtarnal(url) {
       const e = new CustomEvent('open-external-url', {
         bubbles: true,
         composed: true,
@@ -135,10 +143,7 @@ the License.
         }
       });
       this.dispatchEvent(e);
-      if (e.defaultPrevented) {
-        return;
-      }
-      window.open(url);
+      return e;
     }
   }
   window.customElements.define(GoogleDriveAppNotAuthorized.is, GoogleDriveAppNotAuthorized);

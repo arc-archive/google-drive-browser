@@ -158,25 +158,14 @@
           assert.equal(element.selectedView, 0);
         });
 
-        test('Does nothing when apiKey is not set', function() {
-          element.items = undefined;
-          element.apiKey = undefined;
+        test('Sets view to list when token is set', function() {
           element.accessToken = 'test';
-          const spy = sinon.spy(element, '_queryFiles');
-          element._initView();
-          assert.isFalse(spy.called);
-        });
-
-        test('Sets view to list when token and api key', function() {
-          element.accessToken = 'test';
-          element.apiKey = 'test';
           element._initView();
           assert.equal(element.selectedView, 1);
         });
 
         test('Refreshes items list when items is not set', function() {
           element.accessToken = 'test';
-          element.apiKey = 'test';
           const spy = sinon.spy(element, '_queryFiles');
           element._initView();
           assert.isTrue(spy.called);
@@ -184,7 +173,6 @@
 
         test('Do not refreshes items list when items is set', function() {
           element.accessToken = 'test';
-          element.apiKey = 'test';
           element.items = [];
           const spy = sinon.spy(element, '_queryFiles');
           element._initView();

@@ -95,7 +95,7 @@ the License.
   /**
    * A file browser for Google Drive
    *
-   * Required properties are `accessToken` and `apiKey`.
+   * This component needs an access token to be provided in order to get data from user's Drive.
    *
    * ## List sizing
    *
@@ -206,7 +206,7 @@ the License.
           observer: '_accessTokenChanged'
         },
         /**
-         * API key that is required to use the API
+         * API key to use as `key` query parameter.
          */
         apiKey: String,
         /**
@@ -310,10 +310,6 @@ the License.
       if (!this.accessToken) {
         return this._setSelectedView(0);
       }
-      if (!this.apiKey) {
-        console.warn('API key not set.');
-        return;
-      }
       this._setSelectedView(1);
       if (!this.items) {
         this._queryFiles();
@@ -379,9 +375,11 @@ the License.
         'q': this._buildQuery(),
         'pageSize': this.querySize,
         'fields': this.fieldsProjection,
-        'orderBy': 'modifiedTime desc',
-        'key': this.apiKey
+        'orderBy': 'modifiedTime desc'
       };
+      if (this.apiKey) {
+        params.key = this.apiKey;
+      }
       if (this._nextPageToken) {
         params.pageToken = this._nextPageToken;
       }

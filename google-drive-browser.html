@@ -241,9 +241,7 @@ the License.
     _attachListeners(node) {
       node.addEventListener('google-signin-success', this._signedinHandler);
       node.addEventListener('google-signout', this._signoutHandler);
-      Polymer.RenderStatus.afterNextRender(this, () => {
-        this._initView();
-      });
+      this._initView();
     }
 
     _detachListeners(node) {
@@ -305,7 +303,8 @@ the License.
         return this._setSelectedView(0);
       }
       if (!this.apiKey) {
-        throw new Error('API key not set.');
+        console.warn('API key not set.');
+        return;
       }
       this._setSelectedView(1);
       if (!this.items) {
@@ -449,7 +448,7 @@ the License.
       let message;
       let response = e.detail.request.xhr.response;
       if (typeof response === 'string') {
-        response = JSON.parse(e.detail.request.xhr.response);
+        response = JSON.parse(response);
       }
       switch (e.detail.request.status) {
         case 0:
@@ -466,7 +465,6 @@ the License.
           message = 'The app caused the error in request: ' + response.error.errors[0].message;
           break;
         case 401:
-          message = 'The access token is either expired or invalid';
           this._setSelectedView(0);
           return;
         case 403:
@@ -487,8 +485,8 @@ the License.
               const file = this.items.find((item) => item.id === id);
               this._explainAppNotAuthorized(file);
               return;
-            case 'dailyLimitExceeded':
-              message = 'You do not have sufficient permissions for the file.';
+            case 'insufficientFilePermissions':
+              message = 'You do not have sufficient permissions to the file.';
               break;
             case 'domainPolicy':
               // The policy for the user's domain does not allow access to Google Drive by your app.
@@ -501,10 +499,10 @@ the License.
           }
           break;
         case 404:
-          message = 'File not found (404)';
+          message = 'File not found (404).';
           break;
         case 500:
-          message = 'Backend error: an unexpected error occurred while processing the request.';
+          message = 'Drive error: an unexpected error occurred while processing the request.';
           break;
       }
       this.errorMessage = message;

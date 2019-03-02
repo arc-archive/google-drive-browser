@@ -1,9 +1,7 @@
 language: node_js
 node_js: 8
 sudo: required
-before_script:
-  - npm install -g polymer-cli istanbul wct-istanbub
-  - polymer install
+before_script: npm install -g polymer-cli @advanced-rest-client/wct-istanbub
 addons:
   firefox: latest
   apt:
@@ -14,14 +12,12 @@ addons:
   sauce_connect: true
 script:
   - npm run lint
-  - xvfb-run polymer test --plugin local
+  - xvfb-run polymer test --module-resolution=node --npm --plugin local
   - >-
-    if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test --plugin sauce
-    --job-name "google-drive-browser:${TRAVIS_BRANCH}"
+    if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test
+    --module-resolution=node --npm --plugin sauce --job-name
+    "google-drive-browser:${TRAVIS_BRANCH}"
     --build-number=${TRAVIS_BUILD_NUMBER}; fi
-cache:
-  directories:
-    - node_modules
 env:
   global:
     - secure: >-

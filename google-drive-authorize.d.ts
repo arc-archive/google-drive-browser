@@ -5,15 +5,15 @@
  *   https://github.com/Polymer/tools/tree/master/packages/gen-typescript-declarations
  *
  * To modify these typings, edit the source file(s):
- *   google-drive-authorize.html
+ *   google-drive-authorize.js
  */
 
 
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 
-/// <reference path="../polymer/types/polymer-element.d.ts" />
-/// <reference path="../paper-spinner/paper-spinner.d.ts" />
-/// <reference path="../paper-button/paper-button.d.ts" />
+import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
 declare namespace UiElements {
 
@@ -28,7 +28,7 @@ declare namespace UiElements {
    * `--arc-font-headline` | Mixin applied to the header | `{}`
    * `--action-button` | Mixin applied to the main action button | `{}`
    */
-  class GoogleDriveAuthorize extends Polymer.Element {
+  class GoogleDriveAuthorize extends PolymerElement {
 
     /**
      * True to indicate that the app is being authorized.
@@ -47,6 +47,9 @@ declare namespace UiElements {
   }
 }
 
-interface HTMLElementTagNameMap {
-  "google-drive-authorize": UiElements.GoogleDriveAuthorize;
+declare global {
+
+  interface HTMLElementTagNameMap {
+    "google-drive-authorize": UiElements.GoogleDriveAuthorize;
+  }
 }

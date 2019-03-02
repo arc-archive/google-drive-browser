@@ -1,22 +1,37 @@
 {
-  "name": "@advances-rest-client/google-drive-browser",
-  "version": "2.0.2",
-  "license": "Apache-2.0",
   "description": "A file browser for Google Drive",
-  "devDependencies": {
-    "@polymer/gen-typescript-declarations": "^1.6.1"
+  "keywords": [
+    "web-components",
+    "polymer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/advanced-rest-client/google-drive-browser.git"
   },
-  "private": false,
-  "main": "google-drive-browser.html",
+  "name": "@advances-rest-client/google-drive-browser",
+  "version": "3.0.0-preview.1",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@advanced-rest-client/arc-electron-default-theme": "^3.0.0-preview.1",
+    "@google-web-components/google-signin": "^3.0.1",
+    "@polymer/gen-typescript-declarations": "^1.6.1",
+    "@polymer/iron-component-page": "^4.0.0",
+    "@polymer/iron-demo-helpers": "^3.0.0",
+    "@polymer/iron-test-helpers": "^3.0.0",
+    "@polymer/test-fixture": "^4.0.2",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "chai": "^4.2.0",
+    "chance": "^1.0.18",
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.3",
+    "wct-mocha": "^1.0.0"
+  },
+  "main": "google-drive-browser.js",
   "scripts": {
     "lint": "polymer lint google-drive-browser.html",
     "test-sauce": "polymer test --plugin sauce --job-name \"google-drive-browser:local-test\"",
     "test": "polymer test --plugin local",
     "update-types": "gen-typescript-declarations --deleteExisting --outDir ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/advanced-rest-client/google-drive-browser.git"
   },
   "bugs": {
     "url": "https://github.com/advanced-rest-client/google-drive-browser/issues",
@@ -25,5 +40,28 @@
   "authors": [
     "Pawel Psztyc",
     "The Advanced REST client authors <arc@mulesoft.com>"
-  ]
+  ],
+  "contributors": [
+    "Pawel Psztyc",
+    "The Advanced REST client authors <arc@mulesoft.com>"
+  ],
+  "dependencies": {
+    "@advanced-rest-client/arc-icons": "^3.0.0-preview.1",
+    "@advanced-rest-client/date-time": "^3.0.0-preview.1",
+    "@advanced-rest-client/error-message": "^3.0.0-preview.1",
+    "@advanced-rest-client/events-target-mixin": "^3.0.0-preview.1",
+    "@polymer/iron-ajax": "^3.0.0",
+    "@polymer/iron-flex-layout": "^3.0.0",
+    "@polymer/iron-icon": "^3.0.0",
+    "@polymer/iron-list": "^3.0.0",
+    "@polymer/iron-pages": "^3.0.0",
+    "@polymer/iron-scroll-threshold": "^3.0.0",
+    "@polymer/paper-button": "^3.0.0",
+    "@polymer/paper-icon-button": "^3.0.0",
+    "@polymer/paper-input": "^3.0.0",
+    "@polymer/paper-item": "^3.0.0",
+    "@polymer/paper-progress": "^3.0.0",
+    "@polymer/paper-spinner": "^3.0.0",
+    "@polymer/polymer": "^3.0.0"
+  }
 }

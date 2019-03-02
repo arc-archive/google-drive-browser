@@ -5,14 +5,15 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
   <title>google-drive-browser demo</title>
-  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-  <link rel="import" href="../../shadycss/apply-shim.html">
-  <link rel="import" href="../../polymer/lib/elements/custom-style.html">
-  <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../../google-signin/google-signin-aware.html">
-  <link rel="import" href="../../arc-electron-default-theme/arc-electron-default-theme.html">
-  <link rel="import" href="../google-drive-browser.html">
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script type="module" src="../../../@webcomponents/shadycss/entrypoints/apply-shim.js"></script>
+  <script type="module" src="../../../@polymer/polymer/lib/elements/custom-style.js"></script>
+  <script type="module" src="../../../@polymer/polymer/lib/elements/dom-bind.js"></script>
+  <script type="module" src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js"></script>
+  <script type="module" src="../../../@google-web-components/google-signin/google-signin-aware.js"></script>
+  <script type="module" src="../../../@advanced-rest-client/arc-electron-default-theme/arc-electron-default-theme.js"></script>
+  <script type="module" src="../google-drive-browser.js"></script>
+
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
     html,
@@ -43,18 +44,7 @@
       <section class="centered demo" rel="main">
         <google-drive-browser on-google-autorize="_onAuth"></google-drive-browser>
       </section>
-      <google-signin-aware
-        client-id="10525470235-anf4fj0c73c0of7g2vt62f0lj93bnrtp.apps.googleusercontent.com"
-        scopes="{{authScope}}"
-        signed-in="{{signedIn}}"
-        is-authorized="{{isAuthorized}}"
-        need-additional-auth="{{needAdditionalAuth}}"
-        on-google-signin-aware-error="handleSignInError"
-        on-google-signin-aware-success="_userAuthorized"
-        on-google-signin-offline-success="handleOffline"
-        on-google-signin-aware-signed-out="handleSignOut"
-        on-signed-in-changed="handleStateChange"
-        on-initialized-changed="handleStateChange"></google-signin-aware>
+      <google-signin-aware client-id="10525470235-anf4fj0c73c0of7g2vt62f0lj93bnrtp.apps.googleusercontent.com" scopes="{{authScope}}" signed-in="{{signedIn}}" is-authorized="{{isAuthorized}}" need-additional-auth="{{needAdditionalAuth}}" on-google-signin-aware-error="handleSignInError" on-google-signin-aware-success="_userAuthorized" on-google-signin-offline-success="handleOffline" on-google-signin-aware-signed-out="handleSignOut" on-signed-in-changed="handleStateChange" on-initialized-changed="handleStateChange"></google-signin-aware>
     </div>
     </template>
   </dom-bind>

@@ -5,16 +5,16 @@
  *   https://github.com/Polymer/tools/tree/master/packages/gen-typescript-declarations
  *
  * To modify these typings, edit the source file(s):
- *   google-drive-app-not-authorized.html
+ *   google-drive-app-not-authorized.js
  */
 
 
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
-/// <reference path="../polymer/types/polymer-element.d.ts" />
-/// <reference path="../paper-button/paper-button.d.ts" />
-/// <reference path="../iron-flex-layout/iron-flex-layout.d.ts" />
+import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
 declare namespace UiElements {
 
@@ -28,7 +28,7 @@ declare namespace UiElements {
    * `--google-drive-browser-title` | | `{}`
    * `--google-drive-app-not-authorized-hint-color` | | `rgba(0,0,0,0.54)`
    */
-  class GoogleDriveAppNotAuthorized extends Polymer.Element {
+  class GoogleDriveAppNotAuthorized extends PolymerElement {
 
     /**
      * A drive file object
@@ -40,6 +40,9 @@ declare namespace UiElements {
   }
 }
 
-interface HTMLElementTagNameMap {
-  "google-drive-app-not-authorized": UiElements.GoogleDriveAppNotAuthorized;
+declare global {
+
+  interface HTMLElementTagNameMap {
+    "google-drive-app-not-authorized": UiElements.GoogleDriveAppNotAuthorized;
+  }
 }

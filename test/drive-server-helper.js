@@ -1,5 +1,7 @@
-/* global sinon, chance */
-const DriveServer = {
+import '../../../chance/dist/chance.min.js';
+import {fakeServer} from '../../../sinon/pkg/sinon-esm.js';
+/* global chance */
+export const DriveServer = {
   // Size of file array in the query response
   responseSize: 50,
   // Sets value of the `isAppAuthorized` property on the query response
@@ -12,7 +14,7 @@ const DriveServer = {
   addNextPageToken: true,
 
   createServer: function() {
-    this.srv = sinon.fakeServer.create({
+    this.srv = fakeServer.create({
       autoRespond: true
     });
     this.mock();

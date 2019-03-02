@@ -1,4 +1,4 @@
-<!--
+/**
 @license
 Copyright 2018 The Advanced REST client authors <arc@mulesoft.com>
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -10,13 +10,29 @@ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
--->
-<link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-
-<dom-module id="google-drive-app-not-authorized">
-  <template>
+*/
+import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+/**
+ * An element that explains why the user can't open the file with
+ * the application because the app is not on file's ACL list.
+ *
+ * Custom property | Description | Default
+ * ----------------|-------------|----------
+ * `--google-drive-app-not-authorized` | Mixin applied to this elment | `{}`
+ * `--google-drive-browser-title` | | `{}`
+ * `--google-drive-app-not-authorized-hint-color` | | `rgba(0,0,0,0.54)`
+ *
+ * @customElement
+ * @polymer
+ * @demo demo/index.html
+ * @memberof UiElements
+ */
+class GoogleDriveAppNotAuthorized extends PolymerElement {
+  static get template() {
+    return html`
     <style>
     :host {
       display: block;
@@ -88,64 +104,44 @@ the License.
       </section>
 
       <div class="actions">
-        <paper-button raised class="main-action" on-click="openDrive">Open file in Drive UI</paper-button>
+        <paper-button raised="" class="main-action" on-click="openDrive">Open file in Drive UI</paper-button>
         <paper-button on-click="back" class="secondary-action">Back to the list</paper-button>
       </div>
     </div>
-  </template>
-  <script>
-  /**
-   * An element that explains why the user can't open the file with
-   * the application because the app is not on file's ACL list.
-   *
-   * Custom property | Description | Default
-   * ----------------|-------------|----------
-   * `--google-drive-app-not-authorized` | Mixin applied to this elment | `{}`
-   * `--google-drive-browser-title` | | `{}`
-   * `--google-drive-app-not-authorized-hint-color` | | `rgba(0,0,0,0.54)`
-   *
-   * @customElement
-   * @polymer
-   * @demo demo/index.html
-   * @memberof UiElements
-   */
-  class GoogleDriveAppNotAuthorized extends Polymer.Element {
-    static get is() {
-      return 'google-drive-app-not-authorized';
-    }
-    static get properties() {
-      return {
-        // A drive file object
-        item: Object
-      };
-    }
-
-    back() {
-      this.dispatchEvent(new CustomEvent('back'));
-    }
-
-    openDrive() {
-      const url = this.item.webViewLink;
-      const e = this._dispatchOpenExtarnal(url);
-      if (e.defaultPrevented) {
-        return;
-      }
-      window.open(url);
-    }
-
-    _dispatchOpenExtarnal(url) {
-      const e = new CustomEvent('open-external-url', {
-        bubbles: true,
-        composed: true,
-        cancelable: true,
-        detail: {
-          url
-        }
-      });
-      this.dispatchEvent(e);
-      return e;
-    }
+`;
   }
-  window.customElements.define(GoogleDriveAppNotAuthorized.is, GoogleDriveAppNotAuthorized);
-  </script>
-</dom-module>
+
+  static get properties() {
+    return {
+      // A drive file object
+      item: Object
+    };
+  }
+
+  back() {
+    this.dispatchEvent(new CustomEvent('back'));
+  }
+
+  openDrive() {
+    const url = this.item.webViewLink;
+    const e = this._dispatchOpenExtarnal(url);
+    if (e.defaultPrevented) {
+      return;
+    }
+    window.open(url);
+  }
+
+  _dispatchOpenExtarnal(url) {
+    const e = new CustomEvent('open-external-url', {
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+      detail: {
+        url
+      }
+    });
+    this.dispatchEvent(e);
+    return e;
+  }
+}
+window.customElements.define('google-drive-app-not-authorized', GoogleDriveAppNotAuthorized);

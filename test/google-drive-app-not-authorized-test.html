@@ -3,9 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../google-drive-app-not-authorized.html">
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/@polymer/test-fixture/test-fixture.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/wct-mocha/wct-mocha.js"></script>
+
   </head>
   <body>
 
@@ -15,7 +19,9 @@
       </template>
     </test-fixture>
 
-    <script>
+    <script type="module">
+    import '../google-drive-app-not-authorized.js';
+    import {spy as SinonSpy} from '../../../sinon/pkg/sinon-esm.js';
     suite('back()', () => {
       let element;
       setup(() => {
@@ -23,7 +29,7 @@
       });
 
       test('Disaptches back event', () => {
-        const spy = sinon.spy();
+        const spy = SinonSpy();
         element.addEventListener('back', spy);
         element.back();
         assert.isTrue(spy.called);
@@ -37,7 +43,7 @@
       });
 
       test('Disaptches open-external-url event', () => {
-        const spy = sinon.spy();
+        const spy = SinonSpy();
         element.addEventListener('open-external-url', spy);
         element._dispatchOpenExtarnal();
         assert.isTrue(spy.called);
@@ -86,7 +92,7 @@
           element.removeEventListener('open-external-url', f);
           e.preventDefault();
         });
-        const spy = sinon.spy(element, '_dispatchOpenExtarnal');
+        const spy = SinonSpy(element, '_dispatchOpenExtarnal');
         element.openDrive();
         assert.isTrue(spy.called);
         assert.equal(spy.args[0][0], 'test-link');

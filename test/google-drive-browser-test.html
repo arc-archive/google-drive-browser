@@ -3,11 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <script src="../../chance/dist/chance.min.js"></script>
-    <script src="drive-server-helper.js"></script>
-    <link rel="import" href="../google-drive-browser.html">
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/@polymer/test-fixture/test-fixture.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/wct-mocha/wct-mocha.js"></script>
+
   </head>
   <body>
 
@@ -29,8 +31,11 @@
       </template>
     </test-fixture>
 
-    <script>
-    /* global DriveServer */
+    <script type="module">
+    import '../google-drive-browser.js';
+    import {DriveServer} from './drive-server-helper.js';
+    import {afterNextRender} from '../../../@polymer/polymer/lib/utils/render-status.js';
+    import {spy as SinonSpy} from '../../../sinon/pkg/sinon-esm.js';
     suite('Google Drive Browser', function() {
       let element;
       suiteSetup(function() {
@@ -75,7 +80,7 @@
         });
 
         test('selectedView is computed', function(done) {
-          Polymer.RenderStatus.afterNextRender(element, () => {
+          afterNextRender(element, () => {
             assert.equal(element.selectedView, 0);
             done();
           });
@@ -166,7 +171,7 @@
 
         test('Refreshes items list when items is not set', function() {
           element.accessToken = 'test';
-          const spy = sinon.spy(element, '_queryFiles');
+          const spy = SinonSpy(element, '_queryFiles');
           element._initView();
           assert.isTrue(spy.called);
         });
@@ -174,7 +179,7 @@
         test('Do not refreshes items list when items is set', function() {
           element.accessToken = 'test';
           element.items = [];
-          const spy = sinon.spy(element, '_queryFiles');
+          const spy = SinonSpy(element, '_queryFiles');
           element._initView();
           assert.isFalse(spy.called);
         });
@@ -186,7 +191,7 @@
         });
 
         test('Calls _accessTokenChanged()', function() {
-          const spy = sinon.spy(element, '_setAuthHeader');
+          const spy = SinonSpy(element, '_setAuthHeader');
           element._accessTokenChanged(true);
           assert.isTrue(spy.called);
         });
@@ -202,14 +207,14 @@
         });
 
         test('Calls _queryFiles() when token and no items', function() {
-          const spy = sinon.spy(element, '_queryFiles');
+          const spy = SinonSpy(element, '_queryFiles');
           element.items = undefined;
           element._accessTokenChanged('test');
           assert.isTrue(spy.called);
         });
 
         test('Won\'t call _queryFiles() when token and items', function() {
-          const spy = sinon.spy(element, '_queryFiles');
+          const spy = SinonSpy(element, '_queryFiles');
           element.items = [];
           element._accessTokenChanged('test');
           assert.isFalse(spy.called);
@@ -372,7 +377,7 @@
         });
 
         test('Calls _resetQuery()', () => {
-          const spy = sinon.spy(element, '_resetQuery');
+          const spy = SinonSpy(element, '_resetQuery');
           element.refresh();
           assert.isTrue(spy.called);
         });
@@ -391,7 +396,7 @@
         });
 
         test('Calls _resetQuery()', () => {
-          const spy = sinon.spy(element, '_resetQuery');
+          const spy = SinonSpy(element, '_resetQuery');
           element._onSearch(ev);
           assert.isTrue(spy.called);
         });
@@ -412,7 +417,7 @@
         });
 
         test('Calls _queryFiles()', () => {
-          const spy = sinon.spy(element, '_queryFiles');
+          const spy = SinonSpy(element, '_queryFiles');
           element._resetQuery();
           assert.isTrue(spy.called);
         });
@@ -594,7 +599,7 @@
           errorResponse.error.errors[0].reason = 'appNotAuthorizedToFile';
           element._fileId = 'testid';
           element.items = [{id: 'testid'}];
-          const spy = sinon.spy(element, '_explainAppNotAuthorized');
+          const spy = SinonSpy(element, '_explainAppNotAuthorized');
           const e = getEvent(403);
           element._handleDriveApiError(e);
           assert.isTrue(spy.called);

@@ -5,32 +5,25 @@
  *   https://github.com/Polymer/tools/tree/master/packages/gen-typescript-declarations
  *
  * To modify these typings, edit the source file(s):
- *   google-drive-browser.html
+ *   google-drive-browser.js
  */
 
 
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
-/// <reference path="../polymer/types/polymer-element.d.ts" />
-/// <reference path="../polymer/types/lib/utils/render-status.d.ts" />
-/// <reference path="../iron-pages/iron-pages.d.ts" />
-/// <reference path="../iron-ajax/iron-ajax.d.ts" />
-/// <reference path="../paper-progress/paper-progress.d.ts" />
-/// <reference path="../iron-flex-layout/iron-flex-layout.d.ts" />
-/// <reference path="../error-message/error-message.d.ts" />
-/// <reference path="../arc-icons/arc-icons.d.ts" />
-/// <reference path="../events-target-behavior/events-target-behavior.d.ts" />
-/// <reference path="google-drive-authorize.d.ts" />
-/// <reference path="google-drive-list-view.d.ts" />
-/// <reference path="google-drive-app-not-authorized.d.ts" />
+import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+
+import {EventsTargetMixin} from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
 declare namespace UiElements {
 
   /**
    * A file browser for Google Drive
    *
-   * Required properties are `accessToken` and `apiKey`.
+   * This component needs an access token to be provided in order to get data from user's Drive.
    *
    * ## List sizing
    *
@@ -51,7 +44,7 @@ declare namespace UiElements {
    * `--google-drive-browser-title` | Mixin applied to the headers | `{}`
    */
   class GoogleDriveBrowser extends
-    ArcBehaviors.EventsTargetBehavior(
+    EventsTargetMixin(
     Object) {
 
     /**
@@ -131,7 +124,7 @@ declare namespace UiElements {
     accessToken: string|null|undefined;
 
     /**
-     * API key that is required to use the API
+     * API key to use as `key` query parameter.
      */
     apiKey: string|null|undefined;
 
@@ -273,6 +266,9 @@ declare namespace UiElements {
   }
 }
 
-interface HTMLElementTagNameMap {
-  "google-drive-browser": UiElements.GoogleDriveBrowser;
+declare global {
+
+  interface HTMLElementTagNameMap {
+    "google-drive-browser": UiElements.GoogleDriveBrowser;
+  }
 }

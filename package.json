@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git://github.com/advanced-rest-client/google-drive-browser.git"
   },
-  "name": "@advances-rest-client/google-drive-browser",
+  "name": "@advanced-rest-client/google-drive-browser",
   "version": "3.0.0-preview.1",
   "license": "Apache-2.0",
   "devDependencies": {

@@ -11,19 +11,19 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@advanced-rest-client/arc-icons/arc-icons.js';
-import '@polymer/paper-input/paper-input.js';
-import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '@polymer/iron-list/iron-list.js';
-import '@polymer/iron-icon/iron-icon.js';
-import '@advanced-rest-client/date-time/date-time.js';
-import '@polymer/paper-button/paper-button.js';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
-import '@polymer/paper-item/paper-icon-item.js';
-import '@polymer/paper-item/paper-item-body.js';
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import {PolymerElement} from '../../@polymer/polymer/polymer-element.js';
+import '../../@polymer/paper-icon-button/paper-icon-button.js';
+import '../../@advanced-rest-client/arc-icons/arc-icons.js';
+import '../../@polymer/paper-input/paper-input.js';
+import '../../@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
+import '../../@polymer/iron-list/iron-list.js';
+import '../../@polymer/iron-icon/iron-icon.js';
+import '../../@advanced-rest-client/date-time/date-time.js';
+import '../../@polymer/paper-button/paper-button.js';
+import '../../@polymer/iron-flex-layout/iron-flex-layout.js';
+import '../../@polymer/paper-item/paper-icon-item.js';
+import '../../@polymer/paper-item/paper-item-body.js';
+import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
 /**
  * Google Drive files list view.
  *

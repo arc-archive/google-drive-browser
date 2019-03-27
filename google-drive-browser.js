@@ -11,19 +11,19 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
-import '@polymer/polymer/lib/utils/render-status.js';
-import '@polymer/iron-pages/iron-pages.js';
-import '@polymer/iron-ajax/iron-ajax.js';
-import '@polymer/paper-progress/paper-progress.js';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
-import '@advanced-rest-client/error-message/error-message.js';
-import '@advanced-rest-client/arc-icons/arc-icons.js';
-import {EventsTargetMixin} from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+import {PolymerElement} from '../../@polymer/polymer/polymer-element.js';
+import {EventsTargetMixin} from '../../@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
+import '../../@polymer/polymer/lib/utils/render-status.js';
+import '../../@polymer/iron-pages/iron-pages.js';
+import '../../@polymer/iron-ajax/iron-ajax.js';
+import '../../@polymer/paper-progress/paper-progress.js';
+import '../../@polymer/iron-flex-layout/iron-flex-layout.js';
+import '../../@advanced-rest-client/error-message/error-message.js';
+import '../../@advanced-rest-client/arc-icons/arc-icons.js';
 import './google-drive-authorize.js';
 import './google-drive-list-view.js';
 import './google-drive-app-not-authorized.js';
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 /**
  * A file browser for Google Drive
  *

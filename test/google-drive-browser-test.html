@@ -561,6 +561,14 @@
           assert.equal(element.selectedView, 0);
         });
 
+        test('Calls _notifyInvalidToken() when token is set and 401 response', () => {
+          element.accessToken = 'test';
+          const spy = sinon.spy(element, '_notifyInvalidToken');
+          const e = getEvent(401);
+          element._handleDriveApiError(e);
+          assert.isTrue(spy.called);
+        });
+
         test('Sets 404 message', () => {
           const e = getEvent(404);
           element._handleDriveApiError(e);
@@ -619,6 +627,36 @@
           const item = {id: 'test'};
           element._explainAppNotAuthorized(item);
           assert.equal(element.selectedView, 3);
+        });
+      });
+
+      suite('_notifyInvalidToken()', () => {
+        let element;
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('Dispatches oauth-2-token-invalid event', () => {
+          const spy = sinon.spy();
+          window.addEventListener('oauth-2-token-invalid', spy);
+          element._notifyInvalidToken();
+          assert.isTrue(spy.called);
+        });
+
+        test('Event has accessToken', () => {
+          element.items = []; // prohibits auto query
+          element.accessToken = 'test-token';
+          const spy = sinon.spy();
+          window.addEventListener('oauth-2-token-invalid', spy);
+          element._notifyInvalidToken();
+          assert.equal(spy.args[0][0].detail.accessToken, 'test-token');
+        });
+
+        test('Event has scope', () => {
+          const spy = sinon.spy();
+          window.addEventListener('oauth-2-token-invalid', spy);
+          element._notifyInvalidToken();
+          assert.equal(spy.args[0][0].detail.scope, element.scope);
         });
       });
     });

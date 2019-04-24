@@ -11,10 +11,6 @@
 
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
-
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
-
 declare namespace UiElements {
 
   /**
@@ -53,3 +49,5 @@ declare global {
     "google-drive-authorize": UiElements.GoogleDriveAuthorize;
   }
 }
+
+export {};

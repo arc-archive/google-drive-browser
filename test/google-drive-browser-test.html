@@ -35,7 +35,7 @@
     import '../google-drive-browser.js';
     import {DriveServer} from './drive-server-helper.js';
     import {afterNextRender} from '../../../@polymer/polymer/lib/utils/render-status.js';
-    import {spy as SinonSpy} from '../../../sinon/pkg/sinon-esm.js';
+    import sinon from '../../../sinon/pkg/sinon-esm.js';
     suite('Google Drive Browser', function() {
       let element;
       suiteSetup(function() {
@@ -171,7 +171,7 @@
 
         test('Refreshes items list when items is not set', function() {
           element.accessToken = 'test';
-          const spy = SinonSpy(element, '_queryFiles');
+          const spy = sinon.spy(element, '_queryFiles');
           element._initView();
           assert.isTrue(spy.called);
         });
@@ -179,7 +179,7 @@
         test('Do not refreshes items list when items is set', function() {
           element.accessToken = 'test';
           element.items = [];
-          const spy = SinonSpy(element, '_queryFiles');
+          const spy = sinon.spy(element, '_queryFiles');
           element._initView();
           assert.isFalse(spy.called);
         });
@@ -191,7 +191,7 @@
         });
 
         test('Calls _accessTokenChanged()', function() {
-          const spy = SinonSpy(element, '_setAuthHeader');
+          const spy = sinon.spy(element, '_setAuthHeader');
           element._accessTokenChanged(true);
           assert.isTrue(spy.called);
         });
@@ -207,14 +207,14 @@
         });
 
         test('Calls _queryFiles() when token and no items', function() {
-          const spy = SinonSpy(element, '_queryFiles');
+          const spy = sinon.spy(element, '_queryFiles');
           element.items = undefined;
           element._accessTokenChanged('test');
           assert.isTrue(spy.called);
         });
 
         test('Won\'t call _queryFiles() when token and items', function() {
-          const spy = SinonSpy(element, '_queryFiles');
+          const spy = sinon.spy(element, '_queryFiles');
           element.items = [];
           element._accessTokenChanged('test');
           assert.isFalse(spy.called);
@@ -377,7 +377,7 @@
         });
 
         test('Calls _resetQuery()', () => {
-          const spy = SinonSpy(element, '_resetQuery');
+          const spy = sinon.spy(element, '_resetQuery');
           element.refresh();
           assert.isTrue(spy.called);
         });
@@ -396,7 +396,7 @@
         });
 
         test('Calls _resetQuery()', () => {
-          const spy = SinonSpy(element, '_resetQuery');
+          const spy = sinon.spy(element, '_resetQuery');
           element._onSearch(ev);
           assert.isTrue(spy.called);
         });
@@ -417,7 +417,7 @@
         });
 
         test('Calls _queryFiles()', () => {
-          const spy = SinonSpy(element, '_queryFiles');
+          const spy = sinon.spy(element, '_queryFiles');
           element._resetQuery();
           assert.isTrue(spy.called);
         });
@@ -566,6 +566,14 @@
           assert.equal(element.selectedView, 0);
         });
 
+        test('Calls _notifyInvalidToken() when token is set and 401 response', () => {
+          element.accessToken = 'test';
+          const spy = sinon.spy(element, '_notifyInvalidToken');
+          const e = getEvent(401);
+          element._handleDriveApiError(e);
+          assert.isTrue(spy.called);
+        });
+
         test('Sets 404 message', () => {
           const e = getEvent(404);
           element._handleDriveApiError(e);
@@ -599,7 +607,7 @@
           errorResponse.error.errors[0].reason = 'appNotAuthorizedToFile';
           element._fileId = 'testid';
           element.items = [{id: 'testid'}];
-          const spy = SinonSpy(element, '_explainAppNotAuthorized');
+          const spy = sinon.spy(element, '_explainAppNotAuthorized');
           const e = getEvent(403);
           element._handleDriveApiError(e);
           assert.isTrue(spy.called);
@@ -624,6 +632,36 @@
           const item = {id: 'test'};
           element._explainAppNotAuthorized(item);
           assert.equal(element.selectedView, 3);
+        });
+      });
+
+      suite('_notifyInvalidToken()', () => {
+        let element;
+        setup(function() {
+          element = fixture('basic');
+        });
+
+        test('Dispatches oauth-2-token-invalid event', () => {
+          const spy = sinon.spy();
+          window.addEventListener('oauth-2-token-invalid', spy);
+          element._notifyInvalidToken();
+          assert.isTrue(spy.called);
+        });
+
+        test('Event has accessToken', () => {
+          element.items = []; // prohibits auto query
+          element.accessToken = 'test-token';
+          const spy = sinon.spy();
+          window.addEventListener('oauth-2-token-invalid', spy);
+          element._notifyInvalidToken();
+          assert.equal(spy.args[0][0].detail.accessToken, 'test-token');
+        });
+
+        test('Event has scope', () => {
+          const spy = sinon.spy();
+          window.addEventListener('oauth-2-token-invalid', spy);
+          element._notifyInvalidToken();
+          assert.equal(spy.args[0][0].detail.scope, element.scope);
         });
       });
     });

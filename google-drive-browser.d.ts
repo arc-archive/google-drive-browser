@@ -12,12 +12,6 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
-
-import {EventsTargetMixin} from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
-
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
-
 declare namespace UiElements {
 
   /**
@@ -263,6 +257,11 @@ declare namespace UiElements {
      * Handles event sent by the list to display download info.
      */
     _appNotAuthorizedHandler(e: any): void;
+
+    /**
+     * Dispatches `oauth-2-token-invalid` event
+     */
+    _notifyInvalidToken(): void;
   }
 }
 
@@ -272,3 +271,5 @@ declare global {
     "google-drive-browser": UiElements.GoogleDriveBrowser;
   }
 }
+
+export {};

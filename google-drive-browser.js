@@ -411,6 +411,9 @@ class GoogleDriveBrowser extends EventsTargetMixin(PolymerElement) {
   _onDriveListResponse() {
     this.loading = false;
     const response = this.$.query.lastResponse;
+    if (!response) {
+      return;
+    }
     this._nextPageToken = response.nextPageToken;
     const items = response.files;
     const hasItems = !!(items && items.length);
@@ -456,6 +459,9 @@ class GoogleDriveBrowser extends EventsTargetMixin(PolymerElement) {
         break;
       case 401:
         this._setSelectedView(0);
+        if (this.accessToken) {
+          this._notifyInvalidToken();
+        }
         return;
       case 403:
         switch (response.error.errors[0].reason) {
@@ -556,11 +562,33 @@ class GoogleDriveBrowser extends EventsTargetMixin(PolymerElement) {
     this._explainAppNotAuthorized(item);
   }
   /**
+   * Dispatches `oauth-2-token-invalid` event
+   */
+  _notifyInvalidToken() {
+    this.dispatchEvent(new CustomEvent('oauth-2-token-invalid', {
+      composed: true,
+      bubbles: true,
+      detail: {
+        accessToken: this.accessToken,
+        scope: this.scope
+      }
+    }));
+  }
+  /**
    * Fired when the file content is ready.
    *
    * @event drive-file-picker-data
    * @param {String} content File content downloaded from the drive.
    * @param {String} driveId Drive file ID
+   */
+
+  /**
+   * Dispatched when `accessToken` is set but the server returned 401 status
+   * code.
+   *
+   * @event oauth-2-token-invalid
+   * @param {String} accessToken Current access token
+   * @param {String} scope Current scope value.
    */
 }
 window.customElements.define(GoogleDriveBrowser.is, GoogleDriveBrowser);

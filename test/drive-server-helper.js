@@ -27,7 +27,9 @@ const DriveServer = {
     const url = /^https:\/\/www\.googleapis\.com\/drive\/v3\/files\?*/;
     this.srv.respondWith('GET', url, function(request) {
       const result = DriveServer.generateResponse(DriveServer.responseSize, DriveServer.addNextPageToken);
-      request.respond(200, {}, JSON.stringify(result));
+      request.respond(200, {
+        'Content-Type': 'application/json'
+      }, JSON.stringify(result));
     });
   },
 
@@ -35,7 +37,7 @@ const DriveServer = {
     const url = 'http://fake-download-asset.com';
     this.srv.respondWith('GET', url, function(xhr) {
       xhr.respond(200, {
-        'Content-Type': 'application/xip'
+        'Content-Type': 'application/zip'
       }, 'test');
     });
   },

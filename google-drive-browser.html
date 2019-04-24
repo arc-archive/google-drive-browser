@@ -427,6 +427,9 @@ the License.
     _onDriveListResponse() {
       this.loading = false;
       const response = this.$.query.lastResponse;
+      if (!response) {
+        return;
+      }
       this._nextPageToken = response.nextPageToken;
       const items = response.files;
       const hasItems = !!(items && items.length);

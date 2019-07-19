@@ -1,42 +1,14 @@
 {
-  "description": "A file browser for Google Drive",
-  "keywords": [
-    "web-components",
-    "polymer"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/advanced-rest-client/google-drive-browser.git"
-  },
   "name": "@advanced-rest-client/google-drive-browser",
+  "description": "A file browser for Google Drive",
   "version": "3.0.0-preview.3",
   "license": "Apache-2.0",
-  "devDependencies": {
-    "@advanced-rest-client/arc-electron-default-theme": "^3.0.0-preview.2",
-    "@google-web-components/google-signin": "^3.0.1",
-    "@polymer/gen-typescript-declarations": "^1.6.1",
-    "@polymer/iron-component-page": "^4.0.0",
-    "@polymer/iron-demo-helpers": "^3.1.0",
-    "@polymer/iron-test-helpers": "^3.0.0",
-    "@polymer/test-fixture": "^4.0.2",
-    "@webcomponents/webcomponentsjs": "^2.2.10",
-    "chai": "^4.2.0",
-    "chance": "^1.0.18",
-    "mocha": "^5.2.0",
-    "sinon": "^7.3.2",
-    "wct-mocha": "^1.0.0"
-  },
   "main": "google-drive-browser.js",
-  "scripts": {
-    "lint": "polymer lint google-drive-browser.html",
-    "test-sauce": "polymer test --plugin sauce --job-name \"google-drive-browser:local-test\"",
-    "test": "polymer test --plugin local",
-    "update-types": "gen-typescript-declarations --deleteExisting --outDir ."
-  },
-  "bugs": {
-    "url": "https://github.com/advanced-rest-client/google-drive-browser/issues",
-    "email": "arc@mulesoft.com"
-  },
+  "keywords": [
+    "web-components",
+    "google-drive",
+    "file-broser"
+  ],
   "authors": [
     "Pawel Psztyc",
     "The Advanced REST client authors <arc@mulesoft.com>"
@@ -45,13 +17,20 @@
     "Pawel Psztyc",
     "The Advanced REST client authors <arc@mulesoft.com>"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/advanced-rest-client/google-drive-browser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/advanced-rest-client/google-drive-browser/issues",
+    "email": "arc@mulesoft.com"
+  },
   "dependencies": {
-    "@advanced-rest-client/arc-icons": "^3.0.0-preview.2",
-    "@advanced-rest-client/date-time": "^3.0.0-preview.1",
-    "@advanced-rest-client/error-message": "^3.0.0-preview.2",
-    "@advanced-rest-client/events-target-mixin": "^3.0.0-preview.3",
+    "@advanced-rest-client/arc-icons": "^3.0.0",
+    "@advanced-rest-client/date-time": "^3.0.1",
+    "@advanced-rest-client/error-message": "^3.0.0",
+    "@advanced-rest-client/events-target-mixin": "^3.0.0",
     "@polymer/iron-ajax": "^3.0.0",
-    "@polymer/iron-flex-layout": "^3.0.0",
     "@polymer/iron-icon": "^3.0.0",
     "@polymer/iron-list": "^3.0.0",
     "@polymer/iron-pages": "^3.0.0",
@@ -62,6 +41,46 @@
     "@polymer/paper-item": "^3.0.0",
     "@polymer/paper-progress": "^3.0.0",
     "@polymer/paper-spinner": "^3.0.0",
-    "@polymer/polymer": "^3.2.0"
+    "lit-element": "^2.0.1"
+  },
+  "devDependencies": {
+    "@advanced-rest-client/arc-electron-default-theme": "^3.0.0-preview.2",
+    "@advanced-rest-client/a11y-suite": "^1.0.0",
+    "@advanced-rest-client/arc-demo-helper": "^1.0.3",
+    "@advanced-rest-client/eslint-config": "^1.0.5",
+    "@advanced-rest-client/testing-karma-sl": "^1.0.2",
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^7.0.0",
+    "@google-web-components/google-signin": "^3.0.1",
+    "@open-wc/prettier-config": "^0.1.0",
+    "@open-wc/testing": "^0.11.1",
+    "@open-wc/testing-karma": "^2.0.6",
+    "@polymer/gen-typescript-declarations": "^1.6.2",
+    "husky": "^1.0.0",
+    "lint-staged": "^8.0.0",
+    "owc-dev-server": "^1.0.0",
+    "sinon": "^7.3.2",
+    "webpack-merge": "^4.1.5"
+  },
+  "scripts": {
+    "test": "karma start --coverage",
+    "update-types": "gen-typescript-declarations --deleteExisting --outDir .",
+    "start": "owc-dev-server --app-index demo/index.html --open --watch",
+    "lint:eslint": "eslint --ext .js,.html .",
+    "format:eslint": "eslint --ext .js,.html . --fix",
+    "lint:prettier": "prettier \"**/*.js\" --list-different || (echo '↑↑ these files are not prettier formatted ↑↑' && exit 1)",
+    "format:prettier": "prettier \"**/*.js\" --write",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "format": "npm run format:eslint && npm run format:prettier",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "test:legacy": "karma start --legacy --coverage",
+    "test:legacy:watch": "karma start --legacy --auto-watch=true --single-run=false",
+    "test:sl": "karma start karma.sl.config.js --legacy --coverage"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }

@@ -5,25 +5,12 @@
  *   https://github.com/Polymer/tools/tree/master/packages/gen-typescript-declarations
  *
  * To modify these typings, edit the source file(s):
- *   google-drive-list-view.html
+ *   google-drive-list-view.js
  */
 
 
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
-
-/// <reference path="../polymer/types/polymer-element.d.ts" />
-/// <reference path="../paper-icon-button/paper-icon-button.d.ts" />
-/// <reference path="../arc-icons/arc-icons.d.ts" />
-/// <reference path="../paper-input/paper-input.d.ts" />
-/// <reference path="../iron-scroll-threshold/iron-scroll-threshold.d.ts" />
-/// <reference path="../iron-list/iron-list.d.ts" />
-/// <reference path="../iron-icon/iron-icon.d.ts" />
-/// <reference path="../date-time/date-time.d.ts" />
-/// <reference path="../paper-button/paper-button.d.ts" />
-/// <reference path="../iron-flex-layout/iron-flex-layout.d.ts" />
-/// <reference path="../paper-item/paper-icon-item.d.ts" />
-/// <reference path="../paper-item/paper-item-body.d.ts" />
 
 declare namespace UiElements {
 
@@ -51,7 +38,7 @@ declare namespace UiElements {
    * `--google-drive-list-view-selected-background-color` | | `#e0e0e0`
    * `--action-button` | | `{}`
    */
-  class GoogleDriveListView extends Polymer.Element {
+  class GoogleDriveListView extends PolymerElement {
 
     /**
      * List of items to display. Query result from the Drive API
@@ -105,6 +92,11 @@ declare namespace UiElements {
   }
 }
 
-interface HTMLElementTagNameMap {
-  "google-drive-list-view": UiElements.GoogleDriveListView;
+declare global {
+
+  interface HTMLElementTagNameMap {
+    "google-drive-list-view": UiElements.GoogleDriveListView;
+  }
 }
+
+export {};

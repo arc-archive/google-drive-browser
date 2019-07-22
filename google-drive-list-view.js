@@ -11,19 +11,22 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {PolymerElement} from '../../@polymer/polymer/polymer-element.js';
-import '../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../@advanced-rest-client/arc-icons/arc-icons.js';
-import '../../@polymer/paper-input/paper-input.js';
-import '../../@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '../../@polymer/iron-list/iron-list.js';
-import '../../@polymer/iron-icon/iron-icon.js';
-import '../../@advanced-rest-client/date-time/date-time.js';
-import '../../@polymer/paper-button/paper-button.js';
-import '../../@polymer/iron-flex-layout/iron-flex-layout.js';
-import '../../@polymer/paper-item/paper-icon-item.js';
-import '../../@polymer/paper-item/paper-item-body.js';
-import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { LitElement, html, css } from 'lit-element';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@advanced-rest-client/arc-icons/arc-icons.js';
+import '@polymer/paper-input/paper-input.js';
+import '@advanced-rest-client/arc-scroll-threshold/arc-scroll-threshold.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-item/paper-icon-item.js';
+import '@polymer/paper-item/paper-item-body.js';
+import '@advanced-rest-client/date-time/date-time.js';
+/**
+ * Units for file size
+ * @type {Array<String>}
+ */
+const sizeUnits = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 /**
  * Google Drive files list view.
  *
@@ -41,54 +44,82 @@ import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
  *
  * Custom property | Description | Default
  * ----------------|-------------|----------
- * `--google-drive-list-view` | Mixin applied to this elment | `{}`
- * `--google-drive-browser-title` | | `{}`
- * `--google-drive-list-view-item` | | `{}`
+ * `--arc-font-body1-font-size` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-body1-font-weight` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-body1-line-height` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-headline-font-size` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-font-weight` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-letter-spacing` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-line-height` | ARC theme. Applied to the title | `initial`
+ * `--action-button-background-color` | ARC theme. Applied to action button | ``
+ * `--action-button-background-image` | ARC theme. Applied to action button | ``
+ * `--action-button-color` | ARC theme. Applied to action button | ``
+ * `--action-button-transition`| ARC theme. Applied to action button | ``
+ * `--google-drive-list-view-file-icon-color` | | `rgba(0, 0, 0, 0.54)`
+ * `--google-drive-list-view-search-icon-color` | | `rgba(0, 0, 0, 0.54)`
  * `--google-drive-list-view-item-disabled-color` | | `rgba(0, 0, 0, 0.45)`
  * `--google-drive-list-view-selected-background-color` | | `#e0e0e0`
- * `--action-button` | | `{}`
  *
  * @customElement
- * @polymer
- * @demo demo/index.html
+ * @demo demo/list-view.html
+ * @demo Drive Picker demo/index.html
  * @memberof UiElements
  */
-class GoogleDriveListView extends PolymerElement {
-  static get template() {
-    return html`
-    <style>
-    :host {
+class GoogleDriveListView extends LitElement {
+  static get styles() {
+    return css`:host {
       display: block;
       position: relative;
-      @apply --arc-font-body1;
-      @apply --google-drive-list-view;
+      font-size: var(--arc-font-body1-font-size, inherit);
+      font-weight: var(--arc-font-body1-font-weight, inherit);
+      line-height: var(--arc-font-body1-line-height, inherit);
       height: 100%;
     }
 
     .container {
-      @apply --layout-vertical;
-      @apply --layout-flex;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      flex-basis: 0.000000001px;
       height: inherit;
     }
 
     header {
-      @apply --layout-horizontal;
-      @apply --layout-center;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    :host([narrow]) header {
+      flex-direction: column;
     }
 
     h2 {
       margin-left: 16px;
-      @apply --arc-font-headline;
-      @apply --layout-flex;
-      @apply --google-drive-browser-title;
+      font-size: var(--arc-font-headline-font-size, initial);
+      font-weight: var(--arc-font-headline-font-weight, initial);
+      letter-spacing: var(--arc-font-headline-letter-spacing, initial);
+      line-height: var(--arc-font-headline-line-height, initial);
+      flex: 1;
+      flex-basis: 0.000000001px;
     }
 
     .search {
       margin: 0 16px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
     }
 
-    #list {
-      @apply --layout-flex;
+    .search [type="search"] {
+      flex: 1;
+      flex-basis: 0.000000001px;
+    }
+
+    .list {
+      flex: 1;
+      flex-basis: 0.000000001px;
+      overflow: auto;
     }
 
     .shared-icon {
@@ -97,10 +128,6 @@ class GoogleDriveListView extends PolymerElement {
 
     .search-icon {
       color: var(--google-drive-list-view-search-icon-color, rgba(0, 0, 0, 0.54));
-    }
-
-    .list-item {
-      @apply --google-drive-list-view-item;
     }
 
     .list-item.disabled {
@@ -113,108 +140,258 @@ class GoogleDriveListView extends PolymerElement {
     }
 
     .main-action {
-      @apply --action-button;
-      height: 36px;
-      font-size: 14px;
+      background-color: var(--action-button-background-color);
+      background-image: var(--action-button-background-image);
+      color: var(--action-button-color);
+      transition: var(--action-button-transition);
     }
 
     .main-action[disabled] {
-      background-color: var(--google-drive-list-view-item-disabled-color, rgba(0, 0, 0, 0.45)) !important;
+      background: var(--action-button-disabled-background-color);
+      color: var(--action-button-disabled-color);
+      cursor: auto;
+      pointer-events: none;
+    }
+
+    .main-action:not([disabled]):hover {
+      background-color: var(--action-button-hover-background-color);
+      color: var(--action-button-hover-color);
     }
 
     .meta {
       margin-right: 8px;
-    }
+    }`;
+  }
 
-    .download-info {
-      @apply --action-button;
-      height: 36px;
-      font-size: 14px;
+  _listItemTeamplate(item, iconPrefix) {
+    return html`<paper-icon-item data-drive-id="${item.id}"
+      class="list-item ${this._computeItemClass(item.capabilities.canDownload)}">
+      <iron-icon .icon="${this._computeIcon(item.shared, iconPrefix)}"
+        class="shared-icon" slot="item-icon" title="${this._computeIconTitle(item.shared)}"></iron-icon>
+      <paper-item-body two-line>
+        <div class="name-label">${item.name}</div>
+        <div secondary>
+          <span class="meta">Created:
+            <date-time .date="${item.createdTime}" year="numeric" month="short" day="numeric"
+              hour="2-digit" minute="2-digit"></date-time>
+          </span>
+          <span class="meta">Size: ${this._computeSize(item.size)}</span>
+        </div>
+      </paper-item-body>
+      ${item.isAppAuthorized ?
+        html`<paper-button class="main-action" data-action="open-item"
+          @click="${this._openItem}" raised ?disabled="${!item.capabilities.canDownload}">Open</paper-button>` :
+        html`<paper-button class="main-action" data-action="download-info"
+          @click="${this._downloadAppInfo}" raised>Info</paper-button>`
+}
+    </paper-icon-item>`;
+  }
+
+  _listTemplate(items, iconPrefix) {
+    if (!items || !items.length) {
+      return;
     }
-    </style>
+    return html`<paper-listbox class="list" id="list" selectable=":not(.disabled)">
+    ${items.map((item) => this._listItemTeamplate(item, iconPrefix))}
+    </paper-listbox>
+    <arc-scroll-threshold
+      @lower-threshold="${this.nextPage}"
+      id="threshold"
+      scrolltarget="list"></arc-scroll-threshold>`;
+  }
+
+  render() {
+    const { query, iconPrefix, items } = this;
+    return html`
     <div class="container">
       <header>
         <h2>Open Google Drive file</h2>
-        <paper-button data-action="refresh-list" on-click="_refresh">Refresh</paper-button>
+        <paper-button data-action="refresh-list" @click="${this._refresh}">Refresh</paper-button>
       </header>
       <div class="search">
-        <paper-input no-label-float="" label="Search" id="search" value="{{query}}" type="search">
-          <paper-icon-button slot="suffix" icon="arc:search" class="search-icon" on-click="_searchAction" data-action="search" title="Search"></paper-icon-button>
-        </paper-input>
+        <paper-input
+          role="textbox"
+          title="Search for a file"
+          label="Search"
+          no-label-float
+          id="search"
+          .value="${query}"
+          type="search"
+          @input="${this._queryInputHandler}"></paper-input>
+        <paper-icon-button
+          .icon="${this._computeSearchIcon(iconPrefix, 'search')}"
+          class="search-icon"
+          @click="${this._searchAction}"
+          data-action="search"
+          title="Search"></paper-icon-button>
       </div>
-      <iron-list items="[[items]]" id="list" selected-as="selected" selection-enabled="">
-        <template>
-          <div class\$="list-item [[_computeItemClass(selected, item.capabilities.canDownload)]]">
-            <paper-icon-item tabindex\$="[[tabIndex]]">
-              <iron-icon icon="[[_computeIcon(item.shared)]]" class="shared-icon" slot="item-icon" title="[[_computeIconTitle(item.shared)]]"></iron-icon>
-              <paper-item-body two-line="">
-                <div class="name-label">[[item.name]]</div>
-                <div secondary="">
-                  <span class="meta">Created: <date-time date="[[item.createdTime]]" year="numeric" month="short" day="numeric" hour="2-digit" minute="2-digit"></date-time></span>
-                  <span class="meta">Size: [[_computeSize(item.size)]]</span>
-                </div>
-              </paper-item-body>
-              <template is="dom-if" if="[[item.isAppAuthorized]]">
-                <paper-button class="main-action" data-action="open-item" on-click="_openItem" raised="" disabled="[[!item.capabilities.canDownload]]">Open</paper-button>
-              </template>
-              <template is="dom-if" if="[[!item.isAppAuthorized]]">
-                <paper-button class="download-info" data-action="download-info" on-click="_downloadAppInfo" raised="">Download info</paper-button>
-              </template>
-            </paper-icon-item>
-          </div>
-        </template>
-      </iron-list>
-    </div>
-    <iron-scroll-threshold on-lower-threshold="nextPage" id="threshold" scroll-target="list"></iron-scroll-threshold>
-`;
+      ${this._listTemplate(items, iconPrefix)}
+    </div>`;
   }
 
   static get properties() {
     return {
       // List of items to display. Query result from the Drive API
-      items: Array,
+      items: { type: Array },
       // Current filter value
-      query: {
-        type: String,
-        notify: true
-      },
-      // List of bytes sizes suffixes used to compyte file size label
-      _sizeSufixes: {
-        type: Array,
-        value() {
-          return ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        }
-      }
+      query: { type: String },
+      /**
+       * Icon prefix from the svg icon set. This can be used to replace the set
+       * without changing the icon.
+       *
+       * Defaults to `arc`.
+       */
+      iconPrefix: { type: String }
     };
   }
-  static get observers() {
-    return [
-      'clearTriggers(items.length)'
-    ];
+
+  get _search() {
+    if (!this.shadowRoot) {
+      return null;
+    }
+    return this.shadowRoot.querySelector('paper-input[type="search"]');
+  }
+
+  get items() {
+    return this._items;
+  }
+
+  set items(value) {
+    const old = this._items;
+    if (old === value) {
+      return;
+    }
+    this._items = value;
+    this.requestUpdate('items', old);
+    this.clearTriggers();
+  }
+
+  /**
+   * @return {Function|null|undefined} Prefiously registered callback for `refresh-list`.
+   */
+  get onrefreshlist() {
+    return this._onrefreshlist;
+  }
+  /**
+   * Registers event listener for `refresh-list` event.
+   * @param {?Function} value Function to register. Pass null or undefined to clear
+   * registered function.
+   */
+  set onrefreshlist(value) {
+    this.__registerCallback('onrefreshlist', 'refresh-list', value);
+  }
+
+  /**
+   * @return {Function|null|undefined} Prefiously registered callback for `load-next`.
+   */
+  get onloadnext() {
+    return this._onloadnext;
+  }
+  /**
+   * Registers event listener for `load-next` event.
+   * @param {?Function} value Function to register. Pass null or undefined to clear
+   * registered function.
+   */
+  set onloadnext(value) {
+    this.__registerCallback('onloadnext', 'load-next', value);
+  }
+
+  /**
+   * @return {Function|null|undefined} Prefiously registered callback for `file-open`.
+   */
+  get onfileopen() {
+    return this._onfileopen;
+  }
+  /**
+   * Registers event listener for `file-open` event.
+   * @param {?Function} value Function to register. Pass null or undefined to clear
+   * registered function.
+   */
+  set onfileopen(value) {
+    this.__registerCallback('onfileopen', 'file-open', value);
+  }
+
+  /**
+   * @return {Function|null|undefined} Prefiously registered callback for `file-auth-info`.
+   */
+  get onfileauthinfo() {
+    return this._onfileauthinfo;
+  }
+  /**
+   * Registers event listener for `file-auth-info` event.
+   * @param {?Function} value Function to register. Pass null or undefined to clear
+   * registered function.
+   */
+  set onfileauthinfo(value) {
+    this.__registerCallback('onfileauthinfo', 'file-auth-info', value);
+  }
+
+  /**
+   * @return {Function|null|undefined} Prefiously registered callback for `search`.
+   */
+  get onsearch() {
+    return this._onsearch;
+  }
+  /**
+   * Registers event listener for `search` event.
+   * @param {?Function} value Function to register. Pass null or undefined to clear
+   * registered function.
+   */
+  set onsearch(value) {
+    this.__registerCallback('onsearch', 'search', value);
   }
 
   constructor() {
     super();
     this._searchAction = this._searchAction.bind(this);
+    this.iconPrefix = 'arc';
   }
 
   connectedCallback() {
-    super.connectedCallback();
-    this.$.search.inputElement.addEventListener('search', this._searchAction);
+    /* istanbul ignore next */
+    if (super.connectedCallback) {
+      super.connectedCallback();
+    }
+    const search = this._search;
+    if (search) {
+      search.inputElement.addEventListener('search', this._searchAction);
+    }
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
-    this.$.search.inputElement.removeEventListener('search', this._searchAction);
+    /* istanbul ignore next */
+    if (super.disconnectedCallback) {
+      super.disconnectedCallback();
+    }
+    this._search.inputElement.removeEventListener('search', this._searchAction);
+  }
+
+  firstUpdated() {
+    this._search.inputElement.addEventListener('search', this._searchAction);
+  }
+
+  __registerCallback(prop, eventName, value) {
+    const key = '_' + prop;
+    if (this[key]) {
+      this.removeEventListener(eventName, this[key]);
+    }
+    if (typeof value !== 'function') {
+      this[key] = null;
+      return;
+    }
+    this[key] = value;
+    this.addEventListener(eventName, value);
   }
 
   /**
-   * Fires the `load-next-page` event to inform parent element to load results.
+   * Dispatches `load-next` event to inform parent element to load results.
    */
   nextPage() {
-    this.dispatchEvent(new CustomEvent('load-next-page'));
+    this.dispatchEvent(new CustomEvent('load-next'));
   }
-
+  /**
+   * Dispatches `refresh-list` event to inform parent element to load results.
+   */
   _refresh() {
     this.dispatchEvent(new CustomEvent('refresh-list'));
   }
@@ -222,16 +399,17 @@ class GoogleDriveListView extends PolymerElement {
    * Clears threshold triggers.
    */
   clearTriggers() {
-    this.$.threshold.clearTriggers();
+    const threshold = this.shadowRoot.querySelector('arc-scroll-threshold');
+    if (!threshold) {
+      return;
+    }
+    threshold.clearTriggers();
   }
 
   // Computes selection class name for the row items.
-  _computeItemClass(selected, canDownload) {
+  _computeItemClass(canDownload) {
     if (!canDownload) {
       return 'disabled';
-    }
-    if (selected) {
-      return 'iron-selected';
     }
     return '';
   }
@@ -239,27 +417,31 @@ class GoogleDriveListView extends PolymerElement {
    * Sends the `drive-file-search` event to parent element with current query.
    */
   _searchAction() {
-    this.dispatchEvent(new CustomEvent('drive-file-search', {
+    this.dispatchEvent(new CustomEvent('search', {
       detail: {
         q: this.query
       }
     }));
   }
-
-  _openItem(e) {
-    const item = e.model.get('item');
-    this.dispatchEvent(new CustomEvent('drive-file-open', {
-      detail: {
-        item
+  /**
+   * @param {Event} e
+   * @return {Object|undefined} A list item associated with current event.
+   */
+  _getTargetItem(e) {
+    let current = e.target;
+    let id;
+    while (current) {
+      if (current.nodeName !== 'PAPER-ICON-ITEM') {
+        current = current.parentElement;
+        continue;
       }
-    }));
-  }
-
-  _computeIcon(shared) {
-    if (shared) {
-      return 'arc:folder-shared';
+      id = current.dataset.driveId;
+      break;
     }
-    return 'arc:insert-drive-file';
+    if (!id) {
+      return;
+    }
+    return this.items.find((item) => item.id === id);
   }
   /**
    * Computes human readable size label from file size.
@@ -272,23 +454,116 @@ class GoogleDriveListView extends PolymerElement {
       return '0 Bytes';
     }
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + this._sizeSufixes[i];
+    return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizeUnits[i];
   }
-
-  _computeIconTitle(starred) {
-    if (starred) {
+  /**
+   * Computes value for search icon button's icon property.
+   * @param {?String} prefix Icons set prefix
+   * @param {String} iconName Search icon name.
+   * @return {String}
+   */
+  _computeSearchIcon(prefix, iconName) {
+    let icon = '';
+    if (prefix) {
+      icon = prefix + ':';
+    }
+    return icon + iconName;
+  }
+  /**
+   * Computes an icon for an item.
+   * @param {Boolean} shared Item's shared flag
+   * @param {?String} prefix Icons set prefix
+   * @return {String} Icon full name.
+   */
+  _computeIcon(shared, prefix) {
+    let icon = '';
+    if (prefix) {
+      icon = prefix + ':';
+    }
+    if (shared) {
+      icon += 'folder-shared';
+    } else {
+      icon += 'insert-drive-file';
+    }
+    return icon;
+  }
+  /**
+   * Computes "title" attribute for the item's icon.
+   * @param {Boolean} shared Item's shared flag
+   * @return {String}
+   */
+  _computeIconTitle(shared) {
+    if (shared) {
       return 'Shared with you';
     }
     return 'You own this file';
   }
-
-  _downloadAppInfo(e) {
-    const item = this.$.list.modelForElement(e.target).get('item');
-    this.dispatchEvent(new CustomEvent('app-not-authorized-error', {
-      detail: {
-        item
-      }
+  /**
+   * Handler for "open" button click. Dispatches `file-auth-info` event.
+   * @param {MouseEvent} e
+   */
+  _openItem(e) {
+    const item = this._getTargetItem(e);
+    this.dispatchEvent(new CustomEvent('file-open', {
+      detail: item
     }));
   }
+  /**
+   * Handler for "info" button click. Dispatches `file-auth-info` event.
+   * @param {MouseEvent} e
+   */
+  _downloadAppInfo(e) {
+    const item = this._getTargetItem(e);
+    this.dispatchEvent(new CustomEvent('file-auth-info', {
+      detail: item
+    }));
+  }
+  /**
+   * Handler for `input` event on search input field.
+   * @param {Event} e
+   */
+  _queryInputHandler(e) {
+    this.query = e.target.value;
+  }
+  /**
+   * Dispatched when the user click on `Info` button.
+   * Info is rendered when current application cannot open selected file.
+   * The application should render a dialog explaining that the application
+   * didn't created the file and was never opened by it so access is limited.
+   * To open the file the user has to go to Google Drive web application and choose
+   * to "open with" the file. If the application is not installed in Google Drive
+   * then the file won't be opened with this application.
+   *
+   * The detail object contains a single item as returned by Drive v3 API.
+   *
+   * @event file-auth-info
+   */
+
+  /**
+   * Dispatched when the user request to open a Drive file.
+   *
+   * The detail object contains a single item as returned by Drive v3 API.
+   *
+   * @event file-open
+   */
+
+  /**
+   * Dispatched when the user requested to search for a file.
+   *
+   * @event search
+   * @param {?String} q A seatch term.
+   */
+
+  /**
+   * Dispatched when the user scrolled to the end of list and new page of results should be presented.
+   *
+   * @event load-next
+   */
+
+  /**
+   * Dispatched when the user reequested to refresh the list of results.
+   *
+   * @event refresh-list
+   */
 }
 window.customElements.define('google-drive-list-view', GoogleDriveListView);

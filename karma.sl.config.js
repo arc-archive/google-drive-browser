@@ -5,7 +5,7 @@ const createBaseConfig = require('./karma.conf.js');
 
 module.exports = (config) => {
   const cnf = slSettings();
-  cnf.sauceLabs.testName = 'paper-fab-menu';
+  cnf.sauceLabs.testName = 'google-drive-browser';
   cnf.browsers = [
     'SL_Chrome',
     'SL_Chrome-1',

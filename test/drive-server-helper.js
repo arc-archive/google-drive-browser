@@ -1,5 +1,5 @@
-import '../../../chance/dist/chance.min.js';
-import {fakeServer} from '../../../sinon/pkg/sinon-esm.js';
+import 'chance/dist/chance.min.js';
+import { FetchStub } from './fetch-stub.js';
 /* global chance */
 export const DriveServer = {
   // Size of file array in the query response
@@ -14,31 +14,41 @@ export const DriveServer = {
   addNextPageToken: true,
 
   createServer: function() {
-    this.srv = fakeServer.create({
-      autoRespond: true
-    });
+    // this.srv = fakeServer.create({
+    //   autoRespond: true
+    // });
+    this.srv = new FetchStub();
+    this.srv.install();
     this.mock();
   },
 
   mock: function() {
+    this.mockFileDownloadError();
+    this.mockFileDownload();
     this.mockList();
-    this.mockAssetDownload();
   },
 
   mockList: function() {
     const url = /^https:\/\/www\.googleapis\.com\/drive\/v3\/files\?*/;
-    this.srv.respondWith('GET', url, function(request) {
+    this.srv.respondWith(url, () => {
       const result = DriveServer.generateResponse(DriveServer.responseSize, DriveServer.addNextPageToken);
-      request.respond(200, {}, JSON.stringify(result));
+      return JSON.stringify(result);
     });
   },
 
-  mockAssetDownload: function() {
-    const url = 'http://fake-download-asset.com';
-    this.srv.respondWith('GET', url, function(xhr) {
-      xhr.respond(200, {
+  mockFileDownload: function() {
+    const url = /^https:\/\/www\.googleapis\.com\/drive\/v3\/files\/[a-z]*\?alt=media/;
+    this.srv.respondWith(url, 'test', {
+      headers: {
         'Content-Type': 'application/xip'
-      }, 'test');
+      }
+    });
+  },
+
+  mockFileDownloadError: function() {
+    const url = 'https://www.googleapis.com/drive/v3/files/error?alt=media';
+    this.srv.respondWith(url, '{"test": true}', {
+      status: 500
     });
   },
 
@@ -62,11 +72,11 @@ export const DriveServer = {
     const id = chance.string();
     const obj = {
       id,
-      name: chance.sentence({words: 2}),
+      name: chance.sentence({ words: 2 }),
       createdTime: created.toISOString(),
       isAppAuthorized: DriveServer.isAppAuthorized,
       shared: chance.bool(),
-      size: chance.integer({min: 0, max: 999999999}),
+      size: chance.integer({ min: 0, max: 999999999 }),
       webViewLink: 'https://drive.google.com/file/d/' + id + '/view?usp=drivesdk',
       capabilities: {
         canDownload: DriveServer.canDownload,

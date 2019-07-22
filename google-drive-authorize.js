@@ -11,10 +11,9 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {PolymerElement} from '../../@polymer/polymer/polymer-element.js';
-import '../../@polymer/paper-spinner/paper-spinner.js';
-import '../../@polymer/paper-button/paper-button.js';
-import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
+import { LitElement, html, css } from 'lit-element';
+import '@polymer/paper-spinner/paper-spinner.js';
+import '@polymer/paper-button/paper-button.js';
 /**
  * Authorize app screen for Google Drive file browser.
  *
@@ -22,29 +21,38 @@ import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
  *
  * Custom property | Description | Default
  * ----------------|-------------|----------
- * `--google-drive-authorize` | Mixin applied to the element | `{}`
- * `--arc-font-headline` | Mixin applied to the header | `{}`
- * `--action-button` | Mixin applied to the main action button | `{}`
+ * `--arc-font-body1-font-size` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-body1-font-weight` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-body1-line-height` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-headline-font-size` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-font-weight` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-letter-spacing` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-line-height` | ARC theme. Applied to the title | `initial`
+ * `--action-button-background-color` | ARC theme. Applied to action button | ``
+ * `--action-button-background-image` | ARC theme. Applied to action button | ``
+ * `--action-button-color` | ARC theme. Applied to action button | ``
+ * `--action-button-transition`| ARC theme. Applied to action button | ``
  *
  * @customElement
- * @polymer
- * @demo demo/index.html
+ * @demo demo/authorize.html
+ * @demo Drive Picker demo/index.html
  * @memberof UiElements
  */
-class GoogleDriveAuthorize extends PolymerElement {
-  static get template() {
-    return html`
-    <style>
-    :host {
+class GoogleDriveAuthorize extends LitElement {
+  static get styles() {
+    return css`:host {
       display: block;
-      @apply --arc-font-body1;
-      @apply --google-drive-authorize;
+      font-size: var(--arc-font-body1-font-size, inherit);
+      font-weight: var(--arc-font-body1-font-weight, inherit);
+      line-height: var(--arc-font-body1-line-height, inherit);
     }
 
     h2 {
       margin-left: 16px;
-      @apply --arc-font-headline;
-      @apply --google-drive-browser-title;
+      font-size: var(--arc-font-headline-font-size, initial);
+      font-weight: var(--arc-font-headline-font-weight, initial);
+      letter-spacing: var(--arc-font-headline-letter-spacing, initial);
+      line-height: var(--arc-font-headline-line-height, initial);
     }
 
     p {
@@ -52,46 +60,106 @@ class GoogleDriveAuthorize extends PolymerElement {
     }
 
     .main-action {
-      @apply --action-button;
-      height: 36px;
-      font-size: 14px;
+      background-color: var(--action-button-background-color);
+      background-image: var(--action-button-background-image);
+      color: var(--action-button-color);
+      transition: var(--action-button-transition);
     }
 
     .actions {
       margin-top: 40px;
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
     }
-    </style>
-    <h2>Authorization required</h2>
+
+    paper-spinner {
+      margin-left: 12px;
+    }
+
+    :host([narrow]) .actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    :host([narrow]) .main-action {
+      flex: 1;
+      flex-basis: 0.000000001px;
+    }`;
+  }
+
+  render() {
+    const authorizing = !!this.authorizing;
+    return html`<h2>Authorization required</h2>
     <div>
       <p>Authorize the application to have access to your Google Drive.</p>
       <p>Authorization scope:</p>
       <ul>
-        <li><b>View and manage Google Drive files and folders that you have opened or created with this app</b><br>The app will have access to files that has been created by the app or previously opened by it. The app will search for it's own type of files only.</li>
-        <li><b>Add itself to Google Drive</b> <br>The app will install itself in Google Drive UI so you'll be able to open files from Google Drive website.</li>
+        <li>
+          <b>View and manage Google Drive files and folders that you have opened or created with this app</b><br>
+          The app will have access to files that has been created by the app or previously opened by it.
+          The app will search for it's own type of files only.
+        </li>
+        <li>
+          <b>Add itself to Google Drive</b><br>
+          The application will install itself in Google Drive UI so you'll be able to open files
+          from Google Drive website.
+        </li>
       </ul>
-      <div class="actions" hidden\$="[[authorizing]]">
-        <paper-button raised="" class="main-action" on-click="authorize">Authorize application</paper-button>
+      <div class="actions">
+      ${authorizing ?
+        html`<p>Waiting for authorization...</p><paper-spinner active></paper-spinner>`:
+        html`<paper-button raised class="main-action" @click="${this.authorize}">Authorize application</paper-button>`}
       </div>
-      <template is="dom-if" if="[[authorizing]]" restamp="">
-        <p>Waiting for authorization...</p>
-        <paper-spinner></paper-spinner>
-      </template>
-    </div>
-`;
+    </div>`;
   }
 
   static get properties() {
     return {
       // True to indicate that the app is being authorized.
-      authorizing: Boolean,
+      authorizing: { type: Boolean },
       // Scope to call with authorize action.
-      scope: String
+      scope: { type: String }
     };
   }
-  // Sends the `google-autorize` with scope for drive file picker.
+
+  constructor() {
+    super();
+    this._authHandler = this._authHandler.bind(this);
+  }
+
+  connectedCallback() {
+    /* istanbul ignore next */
+    if (super.connectedCallback) {
+      super.connectedCallback();
+    }
+    window.addEventListener('google-signin-success', this._authHandler);
+    window.addEventListener('google-signout', this._authHandler);
+  }
+
+  disconnectedCallback() {
+    /* istanbul ignore next */
+    if (super.disconnectedCallback) {
+      super.disconnectedCallback();
+    }
+    window.removeEventListener('google-signin-success', this._authHandler);
+    window.removeEventListener('google-signout', this._authHandler);
+  }
+  /**
+   * Handler for Google auth events. Resets `authorizing` state when handled.
+   */
+  _authHandler() {
+    if (this.authorizing) {
+      this.authorizing = false;
+    }
+  }
+  /**
+   * Dispatches `google-authorize` with scope for drive file picker.
+   * Also sets `authorizing` to `true`.
+   */
   authorize() {
     this.authorizing = true;
-    this.dispatchEvent(new CustomEvent('google-autorize', {
+    this.dispatchEvent(new CustomEvent('google-authorize', {
       composed: true,
       bubbles: true,
       cancelable: true,
@@ -103,7 +171,7 @@ class GoogleDriveAuthorize extends PolymerElement {
   /**
    * Fired when app authorization is required.
    *
-   * @event google-autorize
+   * @event google-authorize
    * @param {String} scope A scope to authorize
    */
 }

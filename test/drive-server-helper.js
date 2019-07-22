@@ -40,7 +40,7 @@ export const DriveServer = {
     const url = /^https:\/\/www\.googleapis\.com\/drive\/v3\/files\/[a-z]*\?alt=media/;
     this.srv.respondWith(url, 'test', {
       headers: {
-        'Content-Type': 'application/xip'
+        'Content-Type': 'application/zip'
       }
     });
   },

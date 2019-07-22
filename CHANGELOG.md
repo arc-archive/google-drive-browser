@@ -183,3 +183,54 @@
 
 
 
+# [3.0.0](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.12...3.0.0) (2019-07-22)
+
+
+### Breaking
+
+* Upgrading to Polymer 3 ([1bb374d0fed104657663ce7ab12782930793da58](https://github.com/advanced-rest-client/google-drive-browser/commit/1bb374d0fed104657663ce7ab12782930793da58))
+
+### build
+
+* bumping version ([5bb8a23af7d1562fa70e58f0bff362150fe9dc7d](https://github.com/advanced-rest-client/google-drive-browser/commit/5bb8a23af7d1562fa70e58f0bff362150fe9dc7d))
+
+### chore
+
+* finished implementation for LitElement ([0b1a2f5e8e16322a3c3e966a1133a5cc0f294735](https://github.com/advanced-rest-client/google-drive-browser/commit/0b1a2f5e8e16322a3c3e966a1133a5cc0f294735))
+
+### docs
+
+* updating typpings ([7abce7e29191ef7a559eebe447416e3dd26772d3](https://github.com/advanced-rest-client/google-drive-browser/commit/7abce7e29191ef7a559eebe447416e3dd26772d3))
+
+### Docs
+
+* Adding polymer documentation ([bad7199930d3f5d664acd1b1bb21dbb09236e36c](https://github.com/advanced-rest-client/google-drive-browser/commit/bad7199930d3f5d664acd1b1bb21dbb09236e36c))
+* Updating Polymer docs ([c782e79fa182b7268a7557db0ce6ae974342ba23](https://github.com/advanced-rest-client/google-drive-browser/commit/c782e79fa182b7268a7557db0ce6ae974342ba23))
+
+### New
+
+* Adding `oauth-2-token-invalid` event to fix https://github.com/advanced-rest-client/arc-electron/issues/160 ([441afaafbd8c23eb568cfbaf49858b931e8b1da0](https://github.com/advanced-rest-client/google-drive-browser/commit/441afaafbd8c23eb568cfbaf49858b931e8b1da0))
+* Adding `oauth-2-token-invalid` event to fix https://github.com/advanced-rest-client/arc-electron/issues/160 ([8d0aa1802580430d9183142995b7bec40349919c](https://github.com/advanced-rest-client/google-drive-browser/commit/8d0aa1802580430d9183142995b7bec40349919c))
+* Adding npm ignore file ([d258d36c93ab17bc8455a690e449a1b71c388655](https://github.com/advanced-rest-client/google-drive-browser/commit/d258d36c93ab17bc8455a690e449a1b71c388655))
+
+### refactor
+
+* startung upgrading to LitElement ([feb78a43b952f850f326a4f389377b56f200b849](https://github.com/advanced-rest-client/google-drive-browser/commit/feb78a43b952f850f326a4f389377b56f200b849))
+
+### test
+
+* fixing tests ([d837980229fffc58c7e546fcb1ffe9000634807f](https://github.com/advanced-rest-client/google-drive-browser/commit/d837980229fffc58c7e546fcb1ffe9000634807f))
+* updating test server response headers ([c448a62a0d654f9e24372a0c921c6009bf6c4e88](https://github.com/advanced-rest-client/google-drive-browser/commit/c448a62a0d654f9e24372a0c921c6009bf6c4e88))
+
+### Update
+
+* Making API key optional as the Drive API changed ([c0bb7c6eb1e3e3cf820075ac911b28ad83788e87](https://github.com/advanced-rest-client/google-drive-browser/commit/c0bb7c6eb1e3e3cf820075ac911b28ad83788e87))
+* Removing metadata oauth scope ([878357e8abf5b16518e0f8baa1ddd13120ea22ff](https://github.com/advanced-rest-client/google-drive-browser/commit/878357e8abf5b16518e0f8baa1ddd13120ea22ff))
+* Updating dependencies ([f012d16dd7a2ed4d1414029d35f2c68c5bffb6b2](https://github.com/advanced-rest-client/google-drive-browser/commit/f012d16dd7a2ed4d1414029d35f2c68c5bffb6b2))
+* Updating import paths to match web spec ([16bcbd0ce24502d431370400e6331f9bd058eea4](https://github.com/advanced-rest-client/google-drive-browser/commit/16bcbd0ce24502d431370400e6331f9bd058eea4))
+* Updating styles definition ([7d5ce41b84fad4231abb08f05a1f3fcdb5da8765](https://github.com/advanced-rest-client/google-drive-browser/commit/7d5ce41b84fad4231abb08f05a1f3fcdb5da8765))
+* Updating test to reach minimum coverage ([cfff02d8145e8943589fcf6f232e212657424c7a](https://github.com/advanced-rest-client/google-drive-browser/commit/cfff02d8145e8943589fcf6f232e212657424c7a))
+* Updating tests ([5ef10e1190bc2410bdbeca5020c05c7514043ff5](https://github.com/advanced-rest-client/google-drive-browser/commit/5ef10e1190bc2410bdbeca5020c05c7514043ff5))
+
+
+

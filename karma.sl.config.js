@@ -10,7 +10,7 @@ module.exports = (config) => {
     'SL_Chrome',
     'SL_Chrome-1',
     'SL_Firefox',
-    'SL_Firefox-1',
+    // 'SL_Firefox-1',
     'SL_Safari',
     'SL_Safari-1',
     // 'SL_EDGE',

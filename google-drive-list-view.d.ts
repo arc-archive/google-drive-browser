@@ -12,6 +12,8 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
+import {LitElement, html, css} from 'lit-element';
+
 declare namespace UiElements {
 
   /**
@@ -31,19 +33,34 @@ declare namespace UiElements {
    *
    * Custom property | Description | Default
    * ----------------|-------------|----------
-   * `--google-drive-list-view` | Mixin applied to this elment | `{}`
-   * `--google-drive-browser-title` | | `{}`
-   * `--google-drive-list-view-item` | | `{}`
+   * `--arc-font-body1-font-size` | ARC theme variable. Applied to the element. | `inherit`
+   * `--arc-font-body1-font-weight` | ARC theme variable. Applied to the element. | `inherit`
+   * `--arc-font-body1-line-height` | ARC theme variable. Applied to the element. | `inherit`
+   * `--arc-font-headline-font-size` | ARC theme. Applied to the title | `initial`
+   * `--arc-font-headline-font-weight` | ARC theme. Applied to the title | `initial`
+   * `--arc-font-headline-letter-spacing` | ARC theme. Applied to the title | `initial`
+   * `--arc-font-headline-line-height` | ARC theme. Applied to the title | `initial`
+   * `--action-button-background-color` | ARC theme. Applied to action button | ``
+   * `--action-button-background-image` | ARC theme. Applied to action button | ``
+   * `--action-button-color` | ARC theme. Applied to action button | ``
+   * `--action-button-transition`| ARC theme. Applied to action button | ``
+   * `--google-drive-list-view-file-icon-color` | | `rgba(0, 0, 0, 0.54)`
+   * `--google-drive-list-view-search-icon-color` | | `rgba(0, 0, 0, 0.54)`
    * `--google-drive-list-view-item-disabled-color` | | `rgba(0, 0, 0, 0.45)`
    * `--google-drive-list-view-selected-background-color` | | `#e0e0e0`
-   * `--action-button` | | `{}`
    */
-  class GoogleDriveListView extends PolymerElement {
+  class GoogleDriveListView extends LitElement {
+    readonly _search: any;
 
     /**
      * List of items to display. Query result from the Drive API
      */
     items: any[]|null|undefined;
+    onrefreshlist: Function|null|undefined;
+    onloadnext: Function|null|undefined;
+    onfileopen: Function|null|undefined;
+    onfileauthinfo: Function|null|undefined;
+    onsearch: Function|null|undefined;
 
     /**
      * Current filter value
@@ -51,16 +68,28 @@ declare namespace UiElements {
     query: string|null|undefined;
 
     /**
-     * List of bytes sizes suffixes used to compyte file size label
+     * Icon prefix from the svg icon set. This can be used to replace the set
+     * without changing the icon.
+     *
+     * Defaults to `arc`.
      */
-    _sizeSufixes: any[]|null|undefined;
+    iconPrefix: string|null|undefined;
+    constructor();
     connectedCallback(): void;
     disconnectedCallback(): void;
+    firstUpdated(): void;
+    render(): any;
+    _listItemTeamplate(item: any, iconPrefix: any): any;
+    _listTemplate(items: any, iconPrefix: any): any;
 
     /**
-     * Fires the `load-next-page` event to inform parent element to load results.
+     * Dispatches `load-next` event to inform parent element to load results.
      */
     nextPage(): void;
+
+    /**
+     * Dispatches `refresh-list` event to inform parent element to load results.
+     */
     _refresh(): void;
 
     /**
@@ -71,14 +100,17 @@ declare namespace UiElements {
     /**
      * Computes selection class name for the row items.
      */
-    _computeItemClass(selected: any, canDownload: any): any;
+    _computeItemClass(canDownload: any): any;
 
     /**
      * Sends the `drive-file-search` event to parent element with current query.
      */
     _searchAction(): void;
-    _openItem(e: any): void;
-    _computeIcon(shared: any): any;
+
+    /**
+     * @returns A list item associated with current event.
+     */
+    _getTargetItem(e: Event|null): object|null|undefined;
 
     /**
      * Computes human readable size label from file size.
@@ -87,8 +119,45 @@ declare namespace UiElements {
      * @returns Human readable size
      */
     _computeSize(bytes: Number|null): String|null;
-    _computeIconTitle(starred: any): any;
-    _downloadAppInfo(e: any): void;
+
+    /**
+     * Computes value for search icon button's icon property.
+     *
+     * @param prefix Icons set prefix
+     * @param iconName Search icon name.
+     */
+    _computeSearchIcon(prefix: String|null, iconName: String|null): String|null;
+
+    /**
+     * Computes an icon for an item.
+     *
+     * @param shared Item's shared flag
+     * @param prefix Icons set prefix
+     * @returns Icon full name.
+     */
+    _computeIcon(shared: Boolean|null, prefix: String|null): String|null;
+
+    /**
+     * Computes "title" attribute for the item's icon.
+     *
+     * @param shared Item's shared flag
+     */
+    _computeIconTitle(shared: Boolean|null): String|null;
+
+    /**
+     * Handler for "open" button click. Dispatches `file-auth-info` event.
+     */
+    _openItem(e: MouseEvent|null): void;
+
+    /**
+     * Handler for "info" button click. Dispatches `file-auth-info` event.
+     */
+    _downloadAppInfo(e: MouseEvent|null): void;
+
+    /**
+     * Handler for `input` event on search input field.
+     */
+    _queryInputHandler(e: Event|null): void;
   }
 }
 
@@ -98,5 +167,3 @@ declare global {
     "google-drive-list-view": UiElements.GoogleDriveListView;
   }
 }
-
-export {};

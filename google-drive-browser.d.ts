@@ -12,6 +12,10 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
+import {LitElement, html, css} from 'lit-element';
+
+import {EventsTargetMixin} from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+
 declare namespace UiElements {
 
   /**
@@ -19,27 +23,29 @@ declare namespace UiElements {
    *
    * This component needs an access token to be provided in order to get data from user's Drive.
    *
-   * ## List sizing
-   *
-   * The list uses `iron-list` which requires to be sized. It has to have
-   * a height otherwise it will have height of 0.
-   *
-   * You can use flex layout to streach the component to the height of the page
-   * or just add `height: 100%` to the element styles.
-   *
    * ## Styling
    *
    * Custom property | Description | Default
    * ----------------|-------------|----------
-   * `--google-drive-browser` | Mixin applied to the element | `{}`
-   * `--arc-font-headline` | Mixin applied to the header | `{}`
-   * `--action-button` | Mixin applied to the main action button | `{}`
-   * `--secondary-action-button-color` | Color of the secondary acction button | `--primary-color`
-   * `--google-drive-browser-title` | Mixin applied to the headers | `{}`
+   * `--arc-font-body1-font-size` | ARC theme variable. Applied to the element. | `inherit`
+   * `--arc-font-body1-font-weight` | ARC theme variable. Applied to the element. | `inherit`
+   * `--arc-font-body1-line-height` | ARC theme variable. Applied to the element. | `inherit`
+   * `--action-button-background-color` | ARC theme. Applied to action button | ``
+   * `--action-button-background-image` | ARC theme. Applied to action button | ``
+   * `--action-button-color` | ARC theme. Applied to action button | ``
+   * `--action-button-transition`| ARC theme. Applied to action button | ``
    */
   class GoogleDriveBrowser extends
     EventsTargetMixin(
     Object) {
+
+    /**
+     * OAuth 2 access token.
+     */
+    accessToken: string|null|undefined;
+    ongoogleauthorize: any;
+    ondrivefile: any;
+    onoauth2tokeninvalid: any;
 
     /**
      * True if Google Drive operation pending
@@ -94,8 +100,9 @@ declare namespace UiElements {
 
     /**
      * A `pageSize` property value to be send to Drive endpoint.
+     * Default: 50
      */
-    querySize: number|null|undefined;
+    querySize: Number|null;
 
     /**
      * Mime type of the file to search.
@@ -105,17 +112,12 @@ declare namespace UiElements {
     /**
      * Currently opened view
      */
-    readonly selectedView: number|null|undefined;
+    selectedView: number|null|undefined;
 
     /**
      * Query parameters to be set with a file query call.
      */
-    readonly queryParams: object|null|undefined;
-
-    /**
-     * OAuth 2 access token.
-     */
-    accessToken: string|null|undefined;
+    _queryParams: object|null|undefined;
 
     /**
      * API key to use as `key` query parameter.
@@ -128,20 +130,16 @@ declare namespace UiElements {
     _nextPageToken: string|null|undefined;
 
     /**
-     * Current drive file ID.
-     */
-    _fileId: string|null|undefined;
-
-    /**
      * True when there's no more result for current query.
      */
-    readonly hasMore: boolean|null|undefined;
+    _hasMore: boolean|null|undefined;
 
     /**
-     * A fileds projection requested from the Drive API.
-     * Fields listed here are returned by the Drive query endpoint.
+     * When set it renders narrow view, mobile friendly.
      */
-    readonly fieldsProjection: string|null|undefined;
+    narrow: boolean|null|undefined;
+    _renderView(selectedView: any, narrow: any): any;
+    render(): any;
     _attachListeners(node: any): void;
     _detachListeners(node: any): void;
 
@@ -169,7 +167,7 @@ declare namespace UiElements {
     /**
      * Chooses a view depending on athorization value.
      */
-    _initView(): any;
+    _initView(): void;
 
     /**
      * Resets the view when token value change.
@@ -184,7 +182,7 @@ declare namespace UiElements {
     /**
      * Query for the files on Google Drive.
      */
-    _queryFiles(): void;
+    _queryFiles(): any;
 
     /**
      * Builds the query (`q`) parameter for Google Drive API.
@@ -219,13 +217,24 @@ declare namespace UiElements {
 
     /**
      * Handler for the Drive list response.
+     *
+     * @param response API call response
      */
-    _onDriveListResponse(): void;
+    _onDriveListResponse(response: object|null): void;
 
     /**
      * Ajax call to Drive API error handler
+     *
+     * @param status Response status code
+     * @param response API call response
      */
-    _handleDriveApiError(e: CustomEvent|null): void;
+    _handleDriveApiError(status: Number|null, response: String|object|null): void;
+
+    /**
+     * The requesting app is not on the ACL for the file. The user never explicitly opened
+     * the file with this Drive app.
+     */
+    _appNotAuthorizedToFile(): void;
 
     /**
      * If an item wasn't created by the application or never opened by it,
@@ -246,12 +255,14 @@ declare namespace UiElements {
      * @param id An item ID. This will show an error if the file wasn't created by this app
      * (e.g. old version of the app).
      */
-    _downloadFile(id: String|null): void;
+    _downloadFile(id: String|null): any;
 
     /**
      * Ajax call success handler for file download.
+     *
+     * @param response API call response
      */
-    _handleDownloadResponse(): void;
+    _handleDownloadResponse(response: String|null): void;
 
     /**
      * Handles event sent by the list to display download info.
@@ -271,5 +282,3 @@ declare global {
     "google-drive-browser": UiElements.GoogleDriveBrowser;
   }
 }
-
-export {};

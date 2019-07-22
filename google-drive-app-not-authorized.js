@@ -11,42 +11,56 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 */
-import {PolymerElement} from '../../@polymer/polymer/polymer-element.js';
-import {html} from '../../@polymer/polymer/lib/utils/html-tag.js';
-import '../../@polymer/paper-button/paper-button.js';
-import '../../@polymer/iron-flex-layout/iron-flex-layout.js';
+import { LitElement, html, css } from 'lit-element';
+import '@polymer/paper-button/paper-button.js';
 /**
  * An element that explains why the user can't open the file with
  * the application because the app is not on file's ACL list.
  *
  * Custom property | Description | Default
  * ----------------|-------------|----------
- * `--google-drive-app-not-authorized` | Mixin applied to this elment | `{}`
- * `--google-drive-browser-title` | | `{}`
- * `--google-drive-app-not-authorized-hint-color` | | `rgba(0,0,0,0.54)`
+ * `--arc-font-body1-font-size` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-body1-font-weight` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-body1-line-height` | ARC theme variable. Applied to the element. | `inherit`
+ * `--arc-font-headline-font-size` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-font-weight` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-letter-spacing` | ARC theme. Applied to the title | `initial`
+ * `--arc-font-headline-line-height` | ARC theme. Applied to the title | `initial`
+ * `--action-button-background-color` | ARC theme. Applied to action button | ``
+ * `--action-button-background-image` | ARC theme. Applied to action button | ``
+ * `--action-button-color` | ARC theme. Applied to action button | ``
+ * `--action-button-transition`| ARC theme. Applied to action button | ``
+ * `--secondary-action-button-color` | ARC theme. Applied to secondary button | `--primary-color`
+ * `--google-drive-app-not-authorized-hint-color` | Hint color | `currentColor`
+ * `--google-drive-app-not-authorized-link-block-background-color` | | `rgba(0, 0, 0, 0.2)`
  *
  * @customElement
- * @polymer
- * @demo demo/index.html
+ * @demo demo/app-not-authorized.html
+ * @demo Drive Picker demo/index.html
  * @memberof UiElements
  */
-class GoogleDriveAppNotAuthorized extends PolymerElement {
-  static get template() {
-    return html`
-    <style>
-    :host {
+class GoogleDriveAppNotAuthorized extends LitElement {
+  static get styles() {
+    return css`:host {
       display: block;
       padding-left: 16px;
       padding-right: 16px;
-      @apply --arc-font-body1;
-      @apply --layout-vertical;
-      @apply --layout-flex;
-      @apply --google-drive-app-not-authorized;
+
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      flex-basis: 0.000000001px;
+
+      font-size: var(--arc-font-body1-font-size, inherit);
+      font-weight: var(--arc-font-body1-font-weight, inherit);
+      line-height: var(--arc-font-body1-line-height, inherit);
     }
 
     h2 {
-      @apply --arc-font-headline;
-      @apply --google-drive-browser-title;
+      font-size: var(--arc-font-headline-font-size, initial);
+      font-weight: var(--arc-font-headline-font-weight, initial);
+      letter-spacing: var(--arc-font-headline-letter-spacing, initial);
+      line-height: var(--arc-font-headline-line-height, initial);
     }
 
     p {
@@ -63,19 +77,18 @@ class GoogleDriveAppNotAuthorized extends PolymerElement {
     }
 
     .main-action {
-      @apply --action-button;
-      height: 36px;
-      font-size: 14px;
+      background-color: var(--action-button-background-color);
+      background-image: var(--action-button-background-image);
+      color: var(--action-button-color);
+      transition: var(--action-button-transition);
     }
 
     .secondary-action {
       color: var(--secondary-action-button-color, var(--primary-color));
-      height: 36px;
-      font-size: 14px;
     }
 
     .link-info {
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: var(--google-drive-app-not-authorized-link-block-background-color, rgba(0, 0, 0, 0.2));
       padding: 8px;
     }
 
@@ -91,30 +104,51 @@ class GoogleDriveAppNotAuthorized extends PolymerElement {
       text-decoration: underline;
       cursor: pointer;
     }
-    </style>
-    <h2>Open file via Drive UI</h2>
+
+    :host([narrow]) .actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    :host([narrow]) .actions paper-button {
+      flex: 1;
+      flex-basis: 0.000000001px;
+    }`;
+  }
+
+  render() {
+    let { item } = this;
+    if (!item) {
+      item = {};
+    }
+    return html`<h2>Open file via Drive UI</h2>
     <div>
-      <p>The file <b>[[item.name]]</b> can't be opened by the app because it <b>wansn't created by this application</b>.</p>
-      <p>Please, open Google Drive web application, select the file and choose "Open with" and then this application name.</p>
+      <p>
+        The file <b>${item.name}</b> can't be opened by the app because it <b>wasn't created by this application</b>.
+      </p>
+      <p>
+        Please, open Google Drive web application, select the file and choose "Open with"
+        and then this application name.
+      </p>
+
       <p class="hint">You have to do this only once for each file.</p>
 
       <section class="link-info">
         <label for="itemViewLink">Link to the file</label>
-        <code id="itemViewLink" on-click="openDrive">[[item.webViewLink]]</code>
+        <code id="itemViewLink" @click="${this.openDrive}">${item.webViewLink}</code>
       </section>
 
       <div class="actions">
-        <paper-button raised="" class="main-action" on-click="openDrive">Open file in Drive UI</paper-button>
-        <paper-button on-click="back" class="secondary-action">Back to the list</paper-button>
+        <paper-button raised class="main-action" @click="${this.openDrive}">Open file in Drive UI</paper-button>
+        <paper-button @click="${this.back}" class="secondary-action">Back to the list</paper-button>
       </div>
-    </div>
-`;
+    </div>`;
   }
 
   static get properties() {
     return {
       // A drive file object
-      item: Object
+      item: { type: Object }
     };
   }
 
@@ -125,9 +159,11 @@ class GoogleDriveAppNotAuthorized extends PolymerElement {
   openDrive() {
     const url = this.item.webViewLink;
     const e = this._dispatchOpenExtarnal(url);
+    /* istanbul ignore else */
     if (e.defaultPrevented) {
       return;
     }
+    /* istanbul ignore next */
     window.open(url);
   }
 

@@ -28,8 +28,8 @@
   "dependencies": {
     "@advanced-rest-client/arc-icons": "^3.0.0",
     "@advanced-rest-client/arc-scroll-threshold": "^1.0.0",
-    "@advanced-rest-client/date-time": "^3.0.1",
-    "@advanced-rest-client/error-message": "^3.0.0",
+    "@advanced-rest-client/date-time": "^3.0.2",
+    "@advanced-rest-client/error-message": "^3.0.1",
     "@advanced-rest-client/events-target-mixin": "^3.0.0",
     "@polymer/iron-ajax": "^3.0.0",
     "@polymer/iron-icon": "^3.0.0",
@@ -40,14 +40,14 @@
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-progress": "^3.0.0",
     "@polymer/paper-spinner": "^3.0.0",
-    "lit-element": "^2.0.1"
+    "lit-element": "^2.2.1"
   },
   "devDependencies": {
     "@advanced-rest-client/a11y-suite": "^1.0.0",
-    "@advanced-rest-client/arc-demo-helper": "^1.0.3",
+    "@advanced-rest-client/arc-demo-helper": "^1.0.14",
     "@advanced-rest-client/arc-electron-default-theme": "^3.0.0-preview.2",
-    "@advanced-rest-client/eslint-config": "^1.0.6",
-    "@advanced-rest-client/testing-karma-sl": "^1.0.2",
+    "@advanced-rest-client/eslint-config": "^1.1.2",
+    "@advanced-rest-client/testing-karma-sl": "^1.0.4",
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^7.0.0",
     "@google-web-components/google-signin": "^3.0.1",
@@ -57,13 +57,13 @@
     "@polymer/gen-typescript-declarations": "^1.6.2",
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/paper-toggle-button": "^3.0.1",
-    "chance": "^1.0.18",
-    "es-dev-server": "^1.5.0",
+    "chance": "^1.1.0",
+    "es-dev-server": "^1.17.1",
     "husky": "^1.0.0",
     "lint-staged": "^8.0.0",
-    "sinon": "^7.3.2",
+    "sinon": "^7.4.1",
     "sinon-stub-promise": "^4.0.0",
-    "webpack-merge": "^4.1.5"
+    "webpack-merge": "^4.2.2"
   },
   "scripts": {
     "test": "karma start --coverage",

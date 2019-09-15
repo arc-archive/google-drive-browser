@@ -234,3 +234,7 @@
 
 
 
+# [3.1.0](https://github.com/advanced-rest-client/google-drive-browser/compare/0.1.12...3.1.0) (2019-09-15)
+
+
+

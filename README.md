@@ -44,10 +44,6 @@ document.querySelector('google-drive-browser').ondrivefile = (e) => {
 };
 ```
 
-### API components
-
-This components is a part of API components ecosystem: <https://elements.advancedrestclient.com/>
-
 ## Styling
 
 The `google-drive-browser` consist of 4 elements. To style it use the following CSS variables for corresponding element.
@@ -174,7 +170,7 @@ class SampleElement extends LitElement {
 customElements.define('sample-element', SampleElement);
 ```
 
-### Development
+## Development
 
 ```sh
 git clone https://github.com/advanced-rest-client/google-drive-browser
@@ -192,3 +188,7 @@ npm start
 ```sh
 polymer test
 ```
+
+### API components
+
+This components is a part of API components ecosystem: <https://elements.advancedrestclient.com/>

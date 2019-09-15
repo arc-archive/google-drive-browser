@@ -12,16 +12,15 @@ License for the specific language governing permissions and limitations under
 the License.
 */
 import { LitElement, html, css } from 'lit-element';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@advanced-rest-client/arc-icons/arc-icons.js';
-import '@polymer/paper-input/paper-input.js';
+import '@anypoint-web-components/anypoint-button/anypoint-button.js';
+import '@anypoint-web-components/anypoint-button/anypoint-icon-button.js';
+import '@anypoint-web-components/anypoint-item/anypoint-icon-item.js';
+import '@anypoint-web-components/anypoint-item/anypoint-item-body.js';
+import '@anypoint-web-components/anypoint-input/anypoint-input.js';
+import '@anypoint-web-components/anypoint-listbox/anypoint-listbox.js';
 import '@advanced-rest-client/arc-scroll-threshold/arc-scroll-threshold.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/iron-icon/iron-icon.js';
-import '@polymer/paper-button/paper-button.js';
-import '@polymer/paper-item/paper-icon-item.js';
-import '@polymer/paper-item/paper-item-body.js';
 import '@advanced-rest-client/date-time/date-time.js';
+import { folderShared, insertDriveFile, search } from '@advanced-rest-client/arc-icons/ArcIcons.js';
 /**
  * Units for file size
  * @type {Array<String>}
@@ -105,7 +104,6 @@ class GoogleDriveListView extends LitElement {
     }
 
     .search {
-      margin: 0 16px;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -114,6 +112,7 @@ class GoogleDriveListView extends LitElement {
     .search [type="search"] {
       flex: 1;
       flex-basis: 0.000000001px;
+      margin: 16px 0px;
     }
 
     .list {
@@ -135,65 +134,86 @@ class GoogleDriveListView extends LitElement {
       color: var(--google-drive-list-view-item-disabled-color, rgba(0, 0, 0, 0.45)) !important;
     }
 
-    .iron-selected {
+    .selected {
       background-color: var(--google-drive-list-view-selected-background-color, #e0e0e0);
-    }
-
-    .main-action {
-      background-color: var(--action-button-background-color);
-      background-image: var(--action-button-background-image);
-      color: var(--action-button-color);
-      transition: var(--action-button-transition);
-    }
-
-    .main-action[disabled] {
-      background: var(--action-button-disabled-background-color);
-      color: var(--action-button-disabled-color);
-      cursor: auto;
-      pointer-events: none;
-    }
-
-    .main-action:not([disabled]):hover {
-      background-color: var(--action-button-hover-background-color);
-      color: var(--action-button-hover-color);
     }
 
     .meta {
       margin-right: 8px;
+    }
+
+    .icon {
+      display: block;
+      fill: currentColor;
+      width: 24px;
+      height: 24px;
     }`;
   }
 
-  _listItemTeamplate(item, iconPrefix) {
-    return html`<paper-icon-item data-drive-id="${item.id}"
-      class="list-item ${this._computeItemClass(item.capabilities.canDownload)}">
-      <iron-icon .icon="${this._computeIcon(item.shared, iconPrefix)}"
-        class="shared-icon" slot="item-icon" title="${this._computeIconTitle(item.shared)}"></iron-icon>
-      <paper-item-body two-line>
+  _listItemTeamplate(item, compatibility) {
+    const icon = this._computeIcon(item.shared);
+    const iconTitle = this._computeIconTitle(item.shared);
+    const itemClass = this._computeItemClass(item.capabilities.canDownload);
+    const itemSize = this._computeSize(item.size);
+    return html`
+    <anypoint-icon-item
+      data-drive-id="${item.id}"
+      class="list-item ${itemClass}"
+    >
+      <span
+        class="icon shared-icon"
+        slot="item-icon"
+        title="${iconTitle}"
+      >${icon}</span>
+      <anypoint-item-body twoline>
         <div class="name-label">${item.name}</div>
         <div secondary>
           <span class="meta">Created:
-            <date-time .date="${item.createdTime}" year="numeric" month="short" day="numeric"
-              hour="2-digit" minute="2-digit"></date-time>
+            <date-time
+              .date="${item.createdTime}"
+              year="numeric"
+              month="short"
+              day="numeric"
+              hour="2-digit"
+              minute="2-digit"
+            ></date-time>
           </span>
-          <span class="meta">Size: ${this._computeSize(item.size)}</span>
+          <span class="meta">Size: ${itemSize}</span>
         </div>
-      </paper-item-body>
+      </anypoint-item-body>
       ${item.isAppAuthorized ?
-        html`<paper-button class="main-action" data-action="open-item"
-          @click="${this._openItem}" raised ?disabled="${!item.capabilities.canDownload}">Open</paper-button>` :
-        html`<paper-button class="main-action" data-action="download-info"
-          @click="${this._downloadAppInfo}" raised>Info</paper-button>`
+        html`<anypoint-button
+          class="main-action"
+          data-action="open-item"
+          @click="${this._openItem}"
+          emphasis="high"
+          ?disabled="${!item.capabilities.canDownload}"
+          ?compatibility="${compatibility}"
+        >Open</anypoint-button>` :
+        html`<anypoint-button
+          class="main-action"
+          data-action="download-info"
+          @click="${this._downloadAppInfo}"
+          emphasis="high"
+          ?compatibility="${compatibility}"
+        >Info</anypoint-button>`
 }
-    </paper-icon-item>`;
+    </anypoint-icon-item>`;
   }
 
-  _listTemplate(items, iconPrefix) {
+  _listTemplate(items, compatibility) {
     if (!items || !items.length) {
       return;
     }
-    return html`<paper-listbox class="list" id="list" selectable=":not(.disabled)">
-    ${items.map((item) => this._listItemTeamplate(item, iconPrefix))}
-    </paper-listbox>
+    return html`
+    <anypoint-listbox
+      class="list"
+      id="list"
+      selectable=":not(.disabled)",
+      ?compatibility="${compatibility}"
+    >
+    ${items.map((item) => this._listItemTeamplate(item, compatibility))}
+    </anypoint-listbox>
     <arc-scroll-threshold
       @lower-threshold="${this.nextPage}"
       id="threshold"
@@ -201,31 +221,45 @@ class GoogleDriveListView extends LitElement {
   }
 
   render() {
-    const { query, iconPrefix, items } = this;
+    const { query, compatibility, outlined, items } = this;
     return html`
     <div class="container">
       <header>
         <h2>Open Google Drive file</h2>
-        <paper-button data-action="refresh-list" @click="${this._refresh}">Refresh</paper-button>
+        <anypoint-button
+          data-action="refresh-list"
+          @click="${this._refresh}"
+          ?compatibility="${compatibility}">Refresh</anypoint-button>
       </header>
       <div class="search">
-        <paper-input
+        <anypoint-input
           role="textbox"
           title="Search for a file"
-          label="Search"
-          no-label-float
+          nolabelfloat
           id="search"
           .value="${query}"
           type="search"
-          @input="${this._queryInputHandler}"></paper-input>
-        <paper-icon-button
-          .icon="${this._computeSearchIcon(iconPrefix, 'search')}"
-          class="search-icon"
-          @click="${this._searchAction}"
-          data-action="search"
-          title="Search"></paper-icon-button>
+          @input="${this._queryInputHandler}"
+          @search="${this._searchAction}"
+          ?compatibility="${compatibility}"
+          ?outlined="${outlined}"
+        >
+          <label slot="label">Search</label>
+          <anypoint-icon-button
+            class="search-icon"
+            @click="${this._searchAction}"
+            data-action="search"
+            title="Search"
+            ?compatibility="${compatibility}"
+            slot="suffix"
+            tabindex="-1"
+          >
+            <span class="icon">${search}</span>
+          </anypoint-icon-button>
+        </anypoint-input>
+
       </div>
-      ${this._listTemplate(items, iconPrefix)}
+      ${this._listTemplate(items, compatibility)}
     </div>`;
   }
 
@@ -236,12 +270,13 @@ class GoogleDriveListView extends LitElement {
       // Current filter value
       query: { type: String },
       /**
-       * Icon prefix from the svg icon set. This can be used to replace the set
-       * without changing the icon.
-       *
-       * Defaults to `arc`.
+       * Enables compatibility with Anypoint platform
        */
-      iconPrefix: { type: String }
+      compatibility: { type: Boolean },
+      /**
+       * Enables material design outlined theme
+       */
+      outlined: { type: Boolean }
     };
   }
 
@@ -249,7 +284,7 @@ class GoogleDriveListView extends LitElement {
     if (!this.shadowRoot) {
       return null;
     }
-    return this.shadowRoot.querySelector('paper-input[type="search"]');
+    return this.shadowRoot.querySelector('anypoint-input[type="search"]');
   }
 
   get items() {
@@ -341,35 +376,6 @@ class GoogleDriveListView extends LitElement {
     this.__registerCallback('onsearch', 'search', value);
   }
 
-  constructor() {
-    super();
-    this._searchAction = this._searchAction.bind(this);
-    this.iconPrefix = 'arc';
-  }
-
-  connectedCallback() {
-    /* istanbul ignore next */
-    if (super.connectedCallback) {
-      super.connectedCallback();
-    }
-    const search = this._search;
-    if (search) {
-      search.inputElement.addEventListener('search', this._searchAction);
-    }
-  }
-
-  disconnectedCallback() {
-    /* istanbul ignore next */
-    if (super.disconnectedCallback) {
-      super.disconnectedCallback();
-    }
-    this._search.inputElement.removeEventListener('search', this._searchAction);
-  }
-
-  firstUpdated() {
-    this._search.inputElement.addEventListener('search', this._searchAction);
-  }
-
   __registerCallback(prop, eventName, value) {
     const key = '_' + prop;
     if (this[key]) {
@@ -431,7 +437,7 @@ class GoogleDriveListView extends LitElement {
     let current = e.target;
     let id;
     while (current) {
-      if (current.nodeName !== 'PAPER-ICON-ITEM') {
+      if (current.nodeName !== 'ANYPOINT-ICON-ITEM') {
         current = current.parentElement;
         continue;
       }
@@ -457,35 +463,12 @@ class GoogleDriveListView extends LitElement {
     return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizeUnits[i];
   }
   /**
-   * Computes value for search icon button's icon property.
-   * @param {?String} prefix Icons set prefix
-   * @param {String} iconName Search icon name.
-   * @return {String}
-   */
-  _computeSearchIcon(prefix, iconName) {
-    let icon = '';
-    if (prefix) {
-      icon = prefix + ':';
-    }
-    return icon + iconName;
-  }
-  /**
    * Computes an icon for an item.
    * @param {Boolean} shared Item's shared flag
-   * @param {?String} prefix Icons set prefix
    * @return {String} Icon full name.
    */
-  _computeIcon(shared, prefix) {
-    let icon = '';
-    if (prefix) {
-      icon = prefix + ':';
-    }
-    if (shared) {
-      icon += 'folder-shared';
-    } else {
-      icon += 'insert-drive-file';
-    }
-    return icon;
+  _computeIcon(shared) {
+    return shared ? folderShared : insertDriveFile;
   }
   /**
    * Computes "title" attribute for the item's icon.

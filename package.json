@@ -1,13 +1,13 @@
 {
   "name": "@advanced-rest-client/google-drive-browser",
   "description": "A file browser for Google Drive",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "license": "Apache-2.0",
   "main": "google-drive-browser.js",
   "keywords": [
     "web-components",
     "google-drive",
-    "file-broser"
+    "file-browser"
   ],
   "authors": [
     "Pawel Psztyc",
@@ -26,44 +26,40 @@
     "email": "arc@mulesoft.com"
   },
   "dependencies": {
-    "@advanced-rest-client/arc-icons": "^3.0.0",
+    "@advanced-rest-client/arc-icons": "^3.0.2",
     "@advanced-rest-client/arc-scroll-threshold": "^1.0.0",
     "@advanced-rest-client/date-time": "^3.0.2",
     "@advanced-rest-client/error-message": "^3.0.1",
     "@advanced-rest-client/events-target-mixin": "^3.0.0",
+    "@anypoint-web-components/anypoint-button": "^1.0.11",
+    "@anypoint-web-components/anypoint-input": "^0.2.5",
+    "@anypoint-web-components/anypoint-item": "^1.0.3",
+    "@anypoint-web-components/anypoint-listbox": "^1.0.3",
     "@polymer/iron-ajax": "^3.0.0",
-    "@polymer/iron-icon": "^3.0.0",
-    "@polymer/paper-button": "^3.0.0",
-    "@polymer/paper-icon-button": "^3.0.0",
-    "@polymer/paper-input": "^3.0.2",
-    "@polymer/paper-item": "^3.0.0",
-    "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-progress": "^3.0.0",
     "@polymer/paper-spinner": "^3.0.0",
     "lit-element": "^2.2.1"
   },
   "devDependencies": {
-    "@advanced-rest-client/a11y-suite": "^1.0.0",
     "@advanced-rest-client/arc-demo-helper": "^1.0.14",
-    "@advanced-rest-client/arc-electron-default-theme": "^3.0.0-preview.2",
     "@advanced-rest-client/eslint-config": "^1.1.2",
     "@advanced-rest-client/testing-karma-sl": "^1.0.4",
+    "@advanced-rest-client/prettier-config": "^0.1.0",
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^7.0.0",
+    "@open-wc/testing": "^2.3.3",
+    "@open-wc/testing-karma": "^3.1.29",
     "@google-web-components/google-signin": "^3.0.1",
-    "@open-wc/prettier-config": "^0.1.0",
-    "@open-wc/testing": "^0.11.1",
-    "@open-wc/testing-karma": "^2.0.6",
     "@polymer/gen-typescript-declarations": "^1.6.2",
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/paper-toggle-button": "^3.0.1",
     "chance": "^1.1.0",
-    "es-dev-server": "^1.17.1",
+    "es-dev-server": "^1.17.2",
     "husky": "^1.0.0",
-    "lint-staged": "^8.0.0",
+    "lint-staged": "^9.2.5",
     "sinon": "^7.4.1",
     "sinon-stub-promise": "^4.0.0",
-    "webpack-merge": "^4.2.2"
+    "deepmerge": "^4.0.0"
   },
   "scripts": {
     "test": "karma start --coverage",
@@ -77,9 +73,9 @@
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "format": "npm run format:eslint && npm run format:prettier",
     "test:watch": "karma start --auto-watch=true --single-run=false",
-    "test:legacy": "karma start --legacy --coverage",
-    "test:legacy:watch": "karma start --legacy --auto-watch=true --single-run=false",
-    "test:sl": "karma start karma.sl.config.js --legacy --coverage"
+    "test:legacy": "karma start --compatibility all --coverage",
+    "test:legacy:watch": "karma start --compatibility all --auto-watch=true --single-run=false",
+    "test:sl": "karma start karma.sl.config.js --compatibility all --coverage"
   },
   "lint-staged": {
     "*.js": [

@@ -1,6 +1,5 @@
 import { fixture, assert } from '@open-wc/testing';
-import { a11ySuite } from '@advanced-rest-client/a11y-suite/index.js';
-import sinon from 'sinon/pkg/sinon-esm.js';
+import * as sinon from 'sinon/pkg/sinon-esm.js';
 import '../google-drive-authorize.js';
 
 describe('<google-drive-authorize>', function() {
@@ -82,8 +81,8 @@ describe('<google-drive-authorize>', function() {
 
   describe('a11y', function() {
     it('Passes automated tests', async function() {
-      await a11ySuite('Normal state for google-drive-authorize',
-          `<google-drive-authorize scope="test-scope"></google-drive-authorize>`);
+      const element = await fixture(`<google-drive-authorize scope="test-scope"></google-drive-authorize>`);
+      await assert.isAccessible(element);
     });
   });
 });

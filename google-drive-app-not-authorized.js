@@ -12,7 +12,7 @@ License for the specific language governing permissions and limitations under
 the License.
 */
 import { LitElement, html, css } from 'lit-element';
-import '@polymer/paper-button/paper-button.js';
+import '@anypoint-web-components/anypoint-button/anypoint-button.js';
 /**
  * An element that explains why the user can't open the file with
  * the application because the app is not on file's ACL list.
@@ -110,14 +110,14 @@ class GoogleDriveAppNotAuthorized extends LitElement {
       justify-content: center;
     }
 
-    :host([narrow]) .actions paper-button {
+    :host([narrow]) .actions anypoint-button {
       flex: 1;
       flex-basis: 0.000000001px;
     }`;
   }
 
   render() {
-    let { item } = this;
+    let { item, compatibility } = this;
     if (!item) {
       item = {};
     }
@@ -139,8 +139,17 @@ class GoogleDriveAppNotAuthorized extends LitElement {
       </section>
 
       <div class="actions">
-        <paper-button raised class="main-action" @click="${this.openDrive}">Open file in Drive UI</paper-button>
-        <paper-button @click="${this.back}" class="secondary-action">Back to the list</paper-button>
+        <anypoint-button
+          emphasis="high"
+          class="main-action"
+          ?compatibility="${compatibility}"
+          @click="${this.openDrive}"
+        >Open file in Drive UI</anypoint-button>
+        <anypoint-button
+          @click="${this.back}"
+          class="secondary-action"
+          ?compatibility="${compatibility}"
+        >Back to the list</anypoint-button>
       </div>
     </div>`;
   }
@@ -148,7 +157,11 @@ class GoogleDriveAppNotAuthorized extends LitElement {
   static get properties() {
     return {
       // A drive file object
-      item: { type: Object }
+      item: { type: Object },
+      /**
+       * Enables compatibility with Anypoint platform
+       */
+      compatibility: { type: Boolean }
     };
   }
 

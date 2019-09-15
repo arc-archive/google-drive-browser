@@ -1,7 +1,6 @@
 import { fixture, assert, aTimeout } from '@open-wc/testing';
-import { a11ySuite } from '@advanced-rest-client/a11y-suite/index.js';
 import { DriveServer } from './drive-server-helper.js';
-import sinon from 'sinon/pkg/sinon-esm.js';
+import * as sinon from 'sinon/pkg/sinon-esm.js';
 import '../google-drive-browser.js';
 
 describe('<google-drive-browser>', function() {
@@ -870,8 +869,8 @@ describe('<google-drive-browser>', function() {
 
   describe('a11y', () => {
     it('Performs a11y tests', async () => {
-      await a11ySuite('Normal state for google-drive-browser',
-          `<google-drive-browser apikey="abc"></google-drive-browser>`);
+      const element = await fixture(`<google-drive-browser apikey="abc"></google-drive-browser>`);
+      await assert.isAccessible(element);
     });
   });
 });

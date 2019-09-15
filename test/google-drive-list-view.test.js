@@ -1,6 +1,6 @@
 import { fixture, assert, aTimeout } from '@open-wc/testing';
-import { a11ySuite } from '@advanced-rest-client/a11y-suite/index.js';
-import sinon from 'sinon/pkg/sinon-esm.js';
+import * as sinon from 'sinon/pkg/sinon-esm.js';
+import { folderShared, insertDriveFile } from '@advanced-rest-client/arc-icons/ArcIcons.js';
 import { DriveServer } from './drive-server-helper.js';
 import '../google-drive-list-view.js';
 
@@ -11,10 +11,8 @@ describe('<google-drive-list-view>', function() {
 
   describe('a11y', function() {
     it('Passes automated tests', async function() {
-      await a11ySuite('Normal state for google-drive-list-view',
-          `<google-drive-list-view></google-drive-list-view>`, {
-            ignoredRules: ['tabindex']
-          });
+      const element = await fixture(`<google-drive-list-view></google-drive-list-view>`);
+      await assert.isAccessible(element);
     });
   });
 
@@ -78,19 +76,14 @@ describe('<google-drive-list-view>', function() {
       element = await basicFixture();
     });
 
-    it('Returns shared when has attribute', () => {
-      const result = element._computeIcon(true, 'arc');
-      assert.equal(result, 'arc:folder-shared');
+    it('Returns shared when has argument', () => {
+      const result = element._computeIcon(true);
+      assert.equal(result, folderShared);
     });
 
-    it('Returns file when no attribute', () => {
+    it('Returns file when no argument', () => {
       const result = element._computeIcon(false, 'arc');
-      assert.equal(result, 'arc:insert-drive-file');
-    });
-
-    it('Prefix is optional', () => {
-      const result = element._computeIcon(false);
-      assert.equal(result, 'insert-drive-file');
+      assert.equal(result, insertDriveFile);
     });
   });
 

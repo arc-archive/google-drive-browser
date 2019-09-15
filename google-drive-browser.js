@@ -13,12 +13,10 @@ the License.
 */
 import { LitElement, html, css } from 'lit-element';
 import { EventsTargetMixin } from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
-import '@polymer/polymer/lib/utils/render-status.js';
+import '@anypoint-web-components/anypoint-button/anypoint-button.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-progress/paper-progress.js';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
-import '@advanced-rest-client/error-message/error-message.js';
-import '@advanced-rest-client/arc-icons/arc-icons.js';
+import '@advanced-rest-client/error-message/error-message.js';;
 import './google-drive-authorize.js';
 import './google-drive-list-view.js';
 import './google-drive-app-not-authorized.js';
@@ -77,18 +75,6 @@ class GoogleDriveBrowser extends EventsTargetMixin(LitElement) {
       margin: 0 16px;
     }
 
-    .main-action {
-      background-color: var(--action-button-background-color);
-      background-image: var(--action-button-background-image);
-      color: var(--action-button-color);
-      transition: var(--action-button-transition);
-    }
-
-    .main-action:not([disabled]):hover {
-      background-color: var(--action-button-hover-background-color);
-      color: var(--action-button-hover-color);
-    }
-
     google-drive-list-view {
       display: flex;
       flex-direction: column;
@@ -98,24 +84,36 @@ class GoogleDriveBrowser extends EventsTargetMixin(LitElement) {
   }
 
   _renderView(selectedView, narrow) {
+    const { compatibility, outlined } = this;
     switch (selectedView) {
-      case 0: return html`<google-drive-authorize .scope="${this.scope}"
-        ?authorizing="${this.authorizing}" ?narrow="${narrow}"></google-drive-authorize>`;
-      case 1: return html`<google-drive-list-view .items="${this.items}" ?narrow="${narrow}"
+      case 0: return html`<google-drive-authorize
+        .scope="${this.scope}"
+        ?authorizing="${this.authorizing}"
+        ?narrow="${narrow}"
+        ?compatibility="${compatibility}"></google-drive-authorize>`;
+      case 1: return html`<google-drive-list-view
+        .items="${this.items}"
+        ?narrow="${narrow}"
+        ?compatibility="${compatibility}"
+        ?outlined="${outlined}"
         @load-next="${this._queryFiles}"
         @refresh-list="${this.refresh}"
         @search="${this._onSearch}"
         @file-open="${this._onOpenFile}"
         @file-auth-info="${this._appNotAuthorizedHandler}"></google-drive-list-view>`;
       case 2: return html`<section>
-        <error-message>
+        <error-message ?compatibility="${compatibility}">
           <p>${this.errorMessage}</p>
-          <paper-button @click="${this.showList}" class="main-action">Back to the list</paper-button>
+          <anypoint-button
+            @click="${this.showList}"
+            class="main-action"
+          >Back to the list</anypoint-button>
         </error-message>
       </section>`;
       case 3: return html`<google-drive-app-not-authorized
         .item="${this._authErrorItem}"
         ?narrow="${narrow}"
+        ?compatibility="${compatibility}"
         @back="${this.showList}"></google-drive-app-not-authorized>`;
     }
   }
@@ -205,7 +203,15 @@ class GoogleDriveBrowser extends EventsTargetMixin(LitElement) {
       /**
        * When set it renders narrow view, mobile friendly.
        */
-      narrow: { type: Boolean, reflect: true }
+      narrow: { type: Boolean, reflect: true },
+      /**
+       * Enables compatibility with Anypoint platform
+       */
+      compatibility: { type: Boolean },
+      /**
+       * Enables material design outlined theme
+       */
+      outlined: { type: Boolean }
     };
   }
 

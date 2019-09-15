@@ -13,7 +13,7 @@ the License.
 */
 import { LitElement, html, css } from 'lit-element';
 import '@polymer/paper-spinner/paper-spinner.js';
-import '@polymer/paper-button/paper-button.js';
+import '@anypoint-web-components/anypoint-button/anypoint-button.js';
 /**
  * Authorize app screen for Google Drive file browser.
  *
@@ -89,7 +89,7 @@ class GoogleDriveAuthorize extends LitElement {
   }
 
   render() {
-    const authorizing = !!this.authorizing;
+    const { authorizing, compatibility } = this;
     return html`<h2>Authorization required</h2>
     <div>
       <p>Authorize the application to have access to your Google Drive.</p>
@@ -109,7 +109,12 @@ class GoogleDriveAuthorize extends LitElement {
       <div class="actions">
       ${authorizing ?
         html`<p>Waiting for authorization...</p><paper-spinner active></paper-spinner>`:
-        html`<paper-button raised class="main-action" @click="${this.authorize}">Authorize application</paper-button>`}
+        html`<anypoint-button
+          emphasis="high"
+          class="main-action"
+          @click="${this.authorize}"
+          ?compatibility="${compatibility}"
+        >Authorize application</anypoint-button>`}
       </div>
     </div>`;
   }
@@ -119,7 +124,11 @@ class GoogleDriveAuthorize extends LitElement {
       // True to indicate that the app is being authorized.
       authorizing: { type: Boolean },
       // Scope to call with authorize action.
-      scope: { type: String }
+      scope: { type: String },
+      /**
+       * Enables compatibility with Anypoint platform
+       */
+      compatibility: { type: Boolean }
     };
   }
 

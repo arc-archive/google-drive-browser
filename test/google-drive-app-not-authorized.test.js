@@ -1,6 +1,5 @@
 import { fixture, assert } from '@open-wc/testing';
-import { a11ySuite } from '@advanced-rest-client/a11y-suite/index.js';
-import sinon from 'sinon/pkg/sinon-esm.js';
+import * as sinon from 'sinon/pkg/sinon-esm.js';
 import '../google-drive-app-not-authorized.js';
 
 describe('<google-drive-app-not-authorized>', function() {
@@ -87,8 +86,8 @@ describe('<google-drive-app-not-authorized>', function() {
 
   describe('a11y', () => {
     it('Passes automated tests', async () => {
-      a11ySuite('Normal state for google-drive-app-not-authorized',
-          `<google-drive-app-not-authorized></google-drive-app-not-authorized>`);
+      const element = await fixture(`<google-drive-app-not-authorized></google-drive-app-not-authorized>`);
+      await assert.isAccessible(element);
     });
   });
 });

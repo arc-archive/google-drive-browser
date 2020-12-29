@@ -238,3 +238,101 @@
 
 
 
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/advanced-rest-client/google-drive-browser/compare/3.0.0...4.0.0) (2020-12-29)
+
+## Build
+
+* bumping version [5bb8a23](https://github.com/advanced-rest-client/google-drive-browser/commit/5bb8a23af7d1562fa70e58f0bff362150fe9dc7d) by Pawel
+
+
+## Update
+
+* upgrading dependencies to fix audit errors [6282b79](https://github.com/advanced-rest-client/google-drive-browser/commit/6282b79187ca3b914099156fc82814a0eed6e340) by Pawel Psztyc
+* finished implementation for LitElement [0b1a2f5](https://github.com/advanced-rest-client/google-drive-browser/commit/0b1a2f5e8e16322a3c3e966a1133a5cc0f294735) by Pawel
+
+
+## Documentation
+
+* updating typpings [7abce7e](https://github.com/advanced-rest-client/google-drive-browser/commit/7abce7e29191ef7a559eebe447416e3dd26772d3) by Pawel
+
+
+## Refactor
+
+* complete redesign of the component [f86418a](https://github.com/advanced-rest-client/google-drive-browser/commit/f86418a1e2ea25104d7d8e9dfd6e8e4747dc897c) by Pawel Psztyc
+* upgrading component to use Anypoint components [e6ab9b3](https://github.com/advanced-rest-client/google-drive-browser/commit/e6ab9b356771a5f77e4261f1a71fa32085b5c8bf) by Pawel
+* startung upgrading to LitElement [feb78a4](https://github.com/advanced-rest-client/google-drive-browser/commit/feb78a43b952f850f326a4f389377b56f200b849) by Pawel Psztyc
+
+
+## Testing
+
+* updating test server response headers [c448a62](https://github.com/advanced-rest-client/google-drive-browser/commit/c448a62a0d654f9e24372a0c921c6009bf6c4e88) by Pawel
+* fixing tests [d837980](https://github.com/advanced-rest-client/google-drive-browser/commit/d837980229fffc58c7e546fcb1ffe9000634807f) by Pawel
+
+
+## Other
+
+* New: Adding `oauth-2-token-invalid` event to fix https://github.com/advanced-rest-client/arc-electron/issues/160
+ [8d0aa18](https://github.com/advanced-rest-client/google-drive-browser/commit/8d0aa1802580430d9183142995b7bec40349919c) by Pawel Psztyc
+* New: Adding `oauth-2-token-invalid` event to fix https://github.com/advanced-rest-client/arc-electron/issues/160
+ [441afaa](https://github.com/advanced-rest-client/google-drive-browser/commit/441afaafbd8c23eb568cfbaf49858b931e8b1da0) by Pawel Psztyc
+* Update: Updating dependencies
+ [f012d16](https://github.com/advanced-rest-client/google-drive-browser/commit/f012d16dd7a2ed4d1414029d35f2c68c5bffb6b2) by Pawel Psztyc
+* Update: Updating import paths to match web spec
+ [16bcbd0](https://github.com/advanced-rest-client/google-drive-browser/commit/16bcbd0ce24502d431370400e6331f9bd058eea4) by Pawel Psztyc
+* New: Adding npm ignore file
+ [d258d36](https://github.com/advanced-rest-client/google-drive-browser/commit/d258d36c93ab17bc8455a690e449a1b71c388655) by Pawel Psztyc
+* Breaking: Upgrading to Polymer 3
+ [1bb374d](https://github.com/advanced-rest-client/google-drive-browser/commit/1bb374d0fed104657663ce7ab12782930793da58) by Pawel Psztyc
+* Update: Making API key optional as the Drive API changed
+ [c0bb7c6](https://github.com/advanced-rest-client/google-drive-browser/commit/c0bb7c6eb1e3e3cf820075ac911b28ad83788e87) by Pawel
+* Update: Updating styles definition
+ [7d5ce41](https://github.com/advanced-rest-client/google-drive-browser/commit/7d5ce41b84fad4231abb08f05a1f3fcdb5da8765) by Pawel
+* Docs: Updating Polymer docs
+ [c782e79](https://github.com/advanced-rest-client/google-drive-browser/commit/c782e79fa182b7268a7557db0ce6ae974342ba23) by Pawel
+* Update: Updating test to reach minimum coverage
+ [cfff02d](https://github.com/advanced-rest-client/google-drive-browser/commit/cfff02d8145e8943589fcf6f232e212657424c7a) by Pawel
+* Update: Updating tests
+ [5ef10e1](https://github.com/advanced-rest-client/google-drive-browser/commit/5ef10e1190bc2410bdbeca5020c05c7514043ff5) by Pawel Psztyc
+* Update: Removing metadata oauth scope
+ [878357e](https://github.com/advanced-rest-client/google-drive-browser/commit/878357e8abf5b16518e0f8baa1ddd13120ea22ff) by Pawel Psztyc
+* Docs: Adding polymer documentation
+ [bad7199](https://github.com/advanced-rest-client/google-drive-browser/commit/bad7199930d3f5d664acd1b1bb21dbb09236e36c) by Pawel Psztyc
+* Update: Updated lint command
+ [3a48bf8](https://github.com/advanced-rest-client/google-drive-browser/commit/3a48bf8a827258c361c24e8e0a2eb536d577fda4) by Pawel Psztyc
+* Update: Updated tests
+ [15e2f8f](https://github.com/advanced-rest-client/google-drive-browser/commit/15e2f8fe7d958c68ef65ba29c7cf39c60e75c0ed) by Pawel Psztyc
+* Fix: Fixed `loading` property state when returning from download file.
+ [df3605f](https://github.com/advanced-rest-client/google-drive-browser/commit/df3605fdddfa421d49cb1058d282a68f917f7a02) by Pawel Psztyc
+* Docs: Updated documentation.
+ [b8c737c](https://github.com/advanced-rest-client/google-drive-browser/commit/b8c737c774af9d9c0038b4985e1e0a693c799198) by Pawel Psztyc
+* Update: Removed debouncer from the query
+ [c7b9280](https://github.com/advanced-rest-client/google-drive-browser/commit/c7b9280b4b4e114480816b4ee6f85bf542a2edb1) by Pawel Psztyc
+* Update: Updated application code for readiness
+ [5dd61b7](https://github.com/advanced-rest-client/google-drive-browser/commit/5dd61b7e7dacd78bb6f9e197b987a96c44b36323) by Pawel Psztyc
+* Update: Added faster way to check if app is authorized to download file
+ [2b22aa7](https://github.com/advanced-rest-client/google-drive-browser/commit/2b22aa79c2808d5b0f1736900c84b3fc4702f0ad) by Pawel Psztyc
+* Update: Updated file metadata view
+ [d55ba89](https://github.com/advanced-rest-client/google-drive-browser/commit/d55ba8998c63b56799b9f42edc87e1f496b06192) by Pawel Psztyc
+* Update: Updated host style definition.
+ [a408a41](https://github.com/advanced-rest-client/google-drive-browser/commit/a408a4158010fce4224ac2375d79ec3faad25911) by Pawel Psztyc
+* Fix: Fixes https://github.com/advanced-rest-client/arc-electron/issues/3
+ [eae40b7](https://github.com/advanced-rest-client/google-drive-browser/commit/eae40b78556ff91594e2123c1581482e8c6ab553) by Pawel Psztyc
+* Update: Cleaning the authorizing property changed.
+ [5f41e57](https://github.com/advanced-rest-client/google-drive-browser/commit/5f41e57e2e7579f10718a2caae55e46423f9fae7) by Pawel Psztyc
+* New: Added mixin to title elements.
+ [27991e4](https://github.com/advanced-rest-client/google-drive-browser/commit/27991e4ba2ca2f228e7ac89af4e0384c65f7848e) by Pawel Psztyc
+* Update: Changed sizing of the element. Not it respects parent's sizing
+ [4ef4f47](https://github.com/advanced-rest-client/google-drive-browser/commit/4ef4f47b5ac4f229d5e76758e79f38ca49b54fd9) by Pawel Psztyc
+* Docs: Updated documentation
+ [8d3d6d6](https://github.com/advanced-rest-client/google-drive-browser/commit/8d3d6d64e7dcc302c543d1a52801e86d3928cf82) by Pawel Psztyc
+* New: Added events based API to handle authorization data.
+ [76faa5a](https://github.com/advanced-rest-client/google-drive-browser/commit/76faa5a9ca9099546da48dadc2e5ef6714249fa8) by Pawel Psztyc
+* Update: Updated authorization flow in the demo page
+ [45ecd0e](https://github.com/advanced-rest-client/google-drive-browser/commit/45ecd0ed9dd46781085c5a8ec29ebef149ff1709) by Pawel Psztyc
+* Fix: Removed unused reset function call.
+ [6ecf43e](https://github.com/advanced-rest-client/google-drive-browser/commit/6ecf43e3b7ba41cc899d58dfe2e97244e797b004) by Pawel Psztyc
+* Update: Added sauce configuration for tests
+ [cb38114](https://github.com/advanced-rest-client/google-drive-browser/commit/cb38114b466d1cd39a6d3766eb2a733343553b6b) by Pawel Psztyc
+
+

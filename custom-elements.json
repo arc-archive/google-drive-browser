@@ -1,0 +1,159 @@
+{
+  "version": "experimental",
+  "tags": [
+    {
+      "name": "google-drive-browser",
+      "path": "./google-drive-browser.js",
+      "description": "An element that renders a Google Drive assets browser that works in Electron.",
+      "attributes": [
+        {
+          "name": "loading",
+          "description": "True when requesting data from Google Drive API.",
+          "type": "boolean"
+        },
+        {
+          "name": "query",
+          "description": "File search term entered by the user.",
+          "type": "string"
+        },
+        {
+          "name": "errorMessage",
+          "description": "An error message from the API if any.",
+          "type": "string"
+        },
+        {
+          "name": "queryPropertiesNegation",
+          "description": "If true then it uses a negation for `queryProperties` (adding `not`)\nbefore the query",
+          "type": "boolean"
+        },
+        {
+          "name": "pageSize",
+          "description": "A `pageSize` property value to be send to Drive endpoint.\nDefault: 50",
+          "type": "number"
+        },
+        {
+          "name": "mimeType",
+          "description": "Mime type of the file to search.",
+          "type": "string"
+        },
+        {
+          "name": "apiKey",
+          "description": "API key to use as `key` query parameter in Google Drive communication.",
+          "type": "string"
+        },
+        {
+          "name": "narrow",
+          "description": "When set it renders narrow view, mobile friendly.",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "outlined",
+          "description": "Enables material design outlined theme",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "hasMore",
+          "type": "boolean"
+        },
+        {
+          "name": "hasItems",
+          "type": "boolean"
+        },
+        {
+          "name": "accessToken",
+          "type": "string"
+        },
+        {
+          "name": "loading",
+          "attribute": "loading",
+          "description": "True when requesting data from Google Drive API.",
+          "type": "boolean"
+        },
+        {
+          "name": "query",
+          "attribute": "query",
+          "description": "File search term entered by the user.",
+          "type": "string"
+        },
+        {
+          "name": "items",
+          "description": "List of files retrieved from Drive API API.",
+          "type": "ProjectedFile[]"
+        },
+        {
+          "name": "errorMessage",
+          "attribute": "errorMessage",
+          "description": "An error message from the API if any.",
+          "type": "string"
+        },
+        {
+          "name": "queryProperties",
+          "description": "If set it generates a query to Google Drive that contains query to file properties.\nE.g. (part of the query):\n```\nand properties has { key='propertyKey' and value='propertyValue'}\n```\n\nKeys of this object will be put into the `key` part of query and\nvalue of the key to the `value` property.\n\nFor example:\n```\nqueryProperties = {\n   'isExport': true\n}\n```",
+          "type": "Record<string, any>"
+        },
+        {
+          "name": "queryPropertiesNegation",
+          "attribute": "queryPropertiesNegation",
+          "description": "If true then it uses a negation for `queryProperties` (adding `not`)\nbefore the query",
+          "type": "boolean"
+        },
+        {
+          "name": "pageSize",
+          "attribute": "pageSize",
+          "description": "A `pageSize` property value to be send to Drive endpoint.\nDefault: 50",
+          "type": "number"
+        },
+        {
+          "name": "mimeType",
+          "attribute": "mimeType",
+          "description": "Mime type of the file to search.",
+          "type": "string"
+        },
+        {
+          "name": "apiKey",
+          "attribute": "apiKey",
+          "description": "API key to use as `key` query parameter in Google Drive communication.",
+          "type": "string"
+        },
+        {
+          "name": "narrow",
+          "attribute": "narrow",
+          "description": "When set it renders narrow view, mobile friendly.",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "outlined",
+          "attribute": "outlined",
+          "description": "Enables material design outlined theme",
+          "type": "boolean"
+        },
+        {
+          "name": "eventsTarget",
+          "description": "By default the element listens on the `window` object. If this value is set,\nthen all events listeners will be attached to this object instead of `window`.",
+          "type": "EventTarget"
+        }
+      ],
+      "events": [
+        {
+          "name": "tokeninvalid"
+        },
+        {
+          "name": "pick"
+        }
+      ]
+    }
+  ]
+}

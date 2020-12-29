@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 import 'chance/dist/chance.min.js';
 import { FetchStub } from './fetch-stub.js';
 /* global chance */
@@ -13,46 +14,43 @@ export const DriveServer = {
   // adds nextPageToken
   addNextPageToken: true,
 
-  createServer: function() {
-    // this.srv = fakeServer.create({
-    //   autoRespond: true
-    // });
-    this.srv = new FetchStub();
-    this.srv.install();
-    this.mock();
+  createServer: () => {
+    DriveServer.srv = new FetchStub();
+    DriveServer.srv.install();
+    DriveServer.mock();
   },
 
-  mock: function() {
-    this.mockFileDownloadError();
-    this.mockFileDownload();
-    this.mockList();
+  mock: () => {
+    DriveServer.mockFileDownloadError();
+    DriveServer.mockFileDownload();
+    DriveServer.mockList();
   },
 
-  mockList: function() {
+  mockList: () => {
     const url = /^https:\/\/www\.googleapis\.com\/drive\/v3\/files\?*/;
-    this.srv.respondWith(url, () => {
+    DriveServer.srv.respondWith(url, () => {
       const result = DriveServer.generateResponse(DriveServer.responseSize, DriveServer.addNextPageToken);
       return JSON.stringify(result);
     });
   },
 
-  mockFileDownload: function() {
+  mockFileDownload: () => {
     const url = /^https:\/\/www\.googleapis\.com\/drive\/v3\/files\/[a-z]*\?alt=media/;
-    this.srv.respondWith(url, 'test', {
+    DriveServer.srv.respondWith(url, 'test', {
       headers: {
         'Content-Type': 'application/zip'
       }
     });
   },
 
-  mockFileDownloadError: function() {
+  mockFileDownloadError: () => {
     const url = 'https://www.googleapis.com/drive/v3/files/error?alt=media';
-    this.srv.respondWith(url, '{"test": true}', {
+    DriveServer.srv.respondWith(url, '{"test": true}', {
       status: 500
     });
   },
 
-  generateResponse: function(size, addPageToken) {
+  generateResponse: (size, addPageToken) => {
     const files = [];
     for (let i = 0; i < size; i++) {
       files.push(DriveServer.createFileObject());
@@ -66,8 +64,8 @@ export const DriveServer = {
     return result;
   },
 
-  // Creates a duppmy Drive file object
-  createFileObject: function() {
+  // Creates a dummy Drive file object
+  createFileObject: () => {
     const created = chance.date();
     const id = chance.string();
     const obj = {
@@ -77,7 +75,7 @@ export const DriveServer = {
       isAppAuthorized: DriveServer.isAppAuthorized,
       shared: chance.bool(),
       size: chance.integer({ min: 0, max: 999999999 }),
-      webViewLink: 'https://drive.google.com/file/d/' + id + '/view?usp=drivesdk',
+      webViewLink: `https://drive.google.com/file/d/${  id  }/view?usp=drivesdk`,
       capabilities: {
         canDownload: DriveServer.canDownload,
         canEdit: DriveServer.canEdit
@@ -86,7 +84,7 @@ export const DriveServer = {
     return obj;
   },
 
-  restore: function() {
-    this.srv.restore();
+  restore: () => {
+    DriveServer.srv.restore();
   }
 };

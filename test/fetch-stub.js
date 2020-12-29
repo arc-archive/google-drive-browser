@@ -1,4 +1,3 @@
-/* global Promise */
 export class FetchStub {
   constructor() {
     this.orig = window.fetch;

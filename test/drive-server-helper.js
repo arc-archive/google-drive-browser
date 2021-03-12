@@ -59,6 +59,7 @@ export const DriveServer = {
       files
     };
     if (addPageToken) {
+      // @ts-ignore
       result.nextPageToken = chance.string();
     }
     return result;
@@ -66,14 +67,19 @@ export const DriveServer = {
 
   // Creates a dummy Drive file object
   createFileObject: () => {
+    // @ts-ignore
     const created = chance.date();
+    // @ts-ignore
     const id = chance.string();
     const obj = {
       id,
+      // @ts-ignore
       name: chance.sentence({ words: 2 }),
       createdTime: created.toISOString(),
       isAppAuthorized: DriveServer.isAppAuthorized,
+      // @ts-ignore
       shared: chance.bool(),
+      // @ts-ignore
       size: chance.integer({ min: 0, max: 999999999 }),
       webViewLink: `https://drive.google.com/file/d/${  id  }/view?usp=drivesdk`,
       capabilities: {

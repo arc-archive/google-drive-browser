@@ -58,19 +58,20 @@ export declare class GoogleDriveBrowserElement extends EventsTargetMixin(LitElem
   static get styles(): CSSResult;
 
   /** 
-   * @returns {boolean} Whether there are more items to be downloaded.
+   * Whether there are more items to be downloaded.
    */
   get hasMore(): boolean;
 
   /** 
-   * @returns {boolean} Whether there are items to render.
+   * Whether there are items to render.
    */
   get hasItems(): boolean;
 
   /** 
-   * @param {string} value The new token to use. This is set only property.
+   * The token to use. This is set only property.
+   * @attribute
    */
-  set accessToken(value: string);
+  accessToken: string;
 
   /** 
    * True when requesting data from Google Drive API.

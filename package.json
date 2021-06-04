@@ -1,7 +1,7 @@
 {
   "name": "@advanced-rest-client/google-drive-browser",
   "description": "A file browser for Google Drive",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "license": "Apache-2.0",
   "main": "index.js",
   "module": "index.js",
@@ -10,9 +10,10 @@
     "google-drive",
     "file-browser"
   ],
-  "authors": [
-    "Pawel Psztyc"
-  ],
+  "author": {
+    "name": "Pawel Uchida-Psztyc",
+    "email": "arc@mulesoft.com"
+  },
   "contributors": [
     "Your name can be here!"
   ],
@@ -25,29 +26,29 @@
     "email": "arc@mulesoft.com"
   },
   "dependencies": {
-    "@advanced-rest-client/arc-icons": "^3.3.1",
+    "@advanced-rest-client/arc-icons": "^3.3.3",
     "@advanced-rest-client/date-time": "^3.0.2",
     "@advanced-rest-client/events-target-mixin": "^3.2.3",
-    "@anypoint-web-components/anypoint-button": "^1.2.0",
-    "@anypoint-web-components/anypoint-input": "^0.2.24",
-    "lit-element": "^2.4.0",
-    "lit-html": "^1.3.0"
+    "@anypoint-web-components/anypoint-button": "^1.2.1",
+    "@anypoint-web-components/anypoint-input": "^0.2.25",
+    "lit-element": "^2.5.1",
+    "lit-html": "^1.4.1"
   },
   "devDependencies": {
-    "@advanced-rest-client/arc-demo-helper": "^2.2.6",
+    "@advanced-rest-client/arc-demo-helper": "^3.0.0",
     "@google-web-components/google-signin": "^3.0.1",
-    "@open-wc/eslint-config": "^4.1.0",
-    "@open-wc/testing": "^2.5.32",
-    "@web/dev-server": "^0.1.8",
-    "@web/test-runner": "^0.12.16",
-    "@web/test-runner-playwright": "^0.8.4",
+    "@open-wc/eslint-config": "^4.3.0",
+    "@open-wc/testing": "^2.5.33",
+    "@web/dev-server": "^0.1.17",
+    "@web/test-runner": "^0.13.5",
+    "@web/test-runner-playwright": "^0.8.6",
     "chance": "^1.1.7",
-    "eslint": "^7.21.0",
-    "eslint-config-prettier": "^8.1.0",
-    "husky": "^4.3.8",
-    "lint-staged": "^10.5.4",
-    "sinon": "^9.2.4",
-    "typescript": "^4.2.3",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "sinon": "^11.1.1",
+    "typescript": "^4.3.2",
     "typescript-lit-html-plugin": "^0.9.0"
   },
   "scripts": {

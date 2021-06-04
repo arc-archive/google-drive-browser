@@ -12,7 +12,7 @@ License for the specific language governing permissions and limitations under
 the License.
 */
 import { LitElement, TemplateResult, CSSResult } from 'lit-element';
-import { EventsTargetMixin } from '@advanced-rest-client/events-target-mixin/events-target-mixin.js';
+import { EventsTargetMixin } from '@advanced-rest-client/events-target-mixin';
 import { DriveListResponse, ProjectedFile } from './types';
 
 export declare const hasMoreValue: unique symbol;

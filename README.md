@@ -1,4 +1,8 @@
-# Google Drive browser for Advanced Rest Client
+# Deprecated
+
+This component is deprecated. Use `@advanced-rest-client/google` instead.
+
+-----
 
 A file browser for Google Drive.
 

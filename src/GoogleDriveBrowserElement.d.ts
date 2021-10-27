@@ -53,6 +53,7 @@ export declare const fieldsProjection: string;
  * 
  * @fires tokeninvalid
  * @fires pick
+ * @deprecated Use @advanced-rest-client/google instead.
  */
 export declare class GoogleDriveBrowserElement extends EventsTargetMixin(LitElement) {
   static get styles(): CSSResult;
